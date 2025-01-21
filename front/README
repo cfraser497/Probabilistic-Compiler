@@ -3,16 +3,16 @@ The Language
 The language is based on the fragments in Chapter 6: expressions, arrays,
 boolean expressions, statements, declarations, blocks:
 
-P  ->  { DD SS }
-DD ->  e | DD D | D
-D  ->  T id ;
-T  ->  T [ num ] | int | float | char | bool
-SS ->  e | SS S | S
-S  ->  L = E ; | if ( B ) S | if ( B ) S else S | while ( B ) S
-   |   do S while ( B ) ; | break ; | { DD SS }
-B  ->  B or B | B and B | ! B | ( B ) | E rel E | true | false
-E  ->  E + E | E - E | E * E | E / E | L | ( B ) | num
-L  ->  L [ B ] | id
+Program  ->  { Decls Stmts }
+Decls ->  e | Decls Decl | Decl
+Decl  ->  Type id ;
+Type  ->  Type [ num ] | int | float | char | bool
+Stmts ->  e | Stmts Stmt | Stmt
+Stmt  ->  loc = expr ; | if ( bool ) Stmt | if ( bool ) Stmt else Stmt | while ( bool ) Stmt
+   |   do Stmt while ( bool ) ; | break ; | { Decls Stmts }
+bool  ->  bool or bool | bool and bool | ! bool | ( bool ) | expr rel expr | true | false
+expr  ->  expr + expr | expr - expr | expr * expr | expr / expr | loc | ( bool ) | num
+loc  ->  loc [ bool ] | id
 
 
 Package lexer
