@@ -7,11 +7,14 @@ compile:
 	javac parser/*.java
 	javac main/*.java
 
+
 test:
-	@for i in `(cd tests; ls *.t | sed -e 's/.t$$//')`;\
-		do echo $$i.t;\
-		java main.Main <tests/$$i.t >tmp/$$i.i;\
-		diff tests/$$i.i tmp/$$i.i;\
+	@find tests -type f -name '*.t' | while read file; do \
+		base=$$(basename $$file .t); \
+		dir=$$(dirname $$file); \
+		echo $$file; \
+		java main.Main < $$file > tmp/$$base.i; \
+		diff $$dir/$$base.i tmp/$$base.i; \
 	done
 
 clean:
