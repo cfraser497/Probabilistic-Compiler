@@ -1,5 +1,6 @@
 package parser;
-import java.io.*; import lexer.*; import symbols.*; import inter.*;
+import java.io.*; import lexer.*; import symbols.*; import inter.*; 
+import java.util.List; import java.util.ArrayList;
 
 public class Parser {
 
@@ -102,6 +103,27 @@ public class Parser {
       case Tag.BREAK:
          match(Tag.BREAK); match(';');
          return new Break();
+
+      // choose statement
+      case Tag.CHOOSE:
+         match(Tag.CHOOSE); match('{');
+
+         List<Branch> branches = new ArrayList<>();
+         int totalWeight = 0;
+
+         while(look.tag != '}') {
+            if(look.tag != Tag.NUM) {
+               error("Expected a numeric branch label in choose statement");
+            }
+
+            int value = ((Num) look).value;
+            move(); match(':');
+            Stmt stmt = stmt();
+            totalWeight += value;
+            branches.add(new Branch(value, stmt));
+         }
+         match('}');
+         return new Choose(branches, totalWeight);
 
       case '{':
          return block();

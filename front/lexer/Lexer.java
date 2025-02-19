@@ -14,6 +14,9 @@ public class Lexer {
       reserve( new Word("do",    Tag.DO)    );
       reserve( new Word("break", Tag.BREAK) );
 
+      //pWhile
+      reserve( new Word("choose", Tag.CHOOSE));
+
       reserve( Word.True );  reserve( Word.False );
 
       reserve( Type.Int  );  reserve( Type.Char  );
@@ -33,19 +36,20 @@ public class Lexer {
          else if( peek == '\n' ) line = line + 1;
          else break;
       }
+      // System.out.println("PEEK: " + peek);
       switch( peek ) {
-      case '&':
-         if( readch('&') ) return Word.and;  else return new Token('&');
-      case '|':
-         if( readch('|') ) return Word.or;   else return new Token('|');
-      case '=':
-         if( readch('=') ) return Word.eq;   else return new Token('=');
-      case '!':
-         if( readch('=') ) return Word.ne;   else return new Token('!');
-      case '<':
-         if( readch('=') ) return Word.le;   else return new Token('<');
-      case '>':
-         if( readch('=') ) return Word.ge;   else return new Token('>');
+         case '&':
+            if( readch('&') ) return Word.and;  else return new Token('&');
+         case '|':
+            if( readch('|') ) return Word.or;   else return new Token('|');
+         case '=':
+            if( readch('=') ) return Word.eq;   else return new Token('=');
+         case '!':
+            if( readch('=') ) return Word.ne;   else return new Token('!');
+         case '<':
+            if( readch('=') ) return Word.le;   else return new Token('<');
+         case '>':
+            if( readch('=') ) return Word.ge;   else return new Token('>');
       }
       if( Character.isDigit(peek) ) {
          int v = 0;
