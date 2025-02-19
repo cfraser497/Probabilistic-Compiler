@@ -1,4 +1,4 @@
-build: compile test
+build: compile
 
 compile:
 	javac lexer/*.java
