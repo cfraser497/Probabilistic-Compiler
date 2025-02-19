@@ -1,5 +1,5 @@
 {
-        int x; int y;
+    	int x; int y;
 	
 	x = 0;
 	y = 1;
