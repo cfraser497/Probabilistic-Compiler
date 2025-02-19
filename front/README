@@ -4,16 +4,16 @@ The language is based on the fragments in Chapter 6: expressions, arrays,
 boolean expressions, statements, declarations, blocks:
 
 Program  ->  { Decls Stmts }
-Decls ->  e | Decls Decl | Decl
-Decl  ->  Type id ;
-Type  ->  Type [ num ] | int | float | char | bool
-Stmts ->  e | Stmts Stmt | Stmt
-Stmt  ->  loc = expr ; | if ( bool ) Stmt | if ( bool ) Stmt else Stmt | while ( bool ) Stmt
-   |   do Stmt while ( bool ) ; | break ; | { Decls Stmts } | choose { Cases }
-Cases ->  e | Cases num : Stmt
-bool  ->  bool or bool | bool and bool | ! bool | ( bool ) | expr rel expr | true | false
-expr  ->  expr + expr | expr - expr | expr * expr | expr / expr | loc | ( bool ) | num
-loc  ->  loc [ bool ] | id
+Decls   ->  e | Decls Decl | Decl
+Decl    ->  Type id ;
+Type    ->  Type [ num ] | int | float | char | bool
+Stmts   ->  e | Stmts Stmt | Stmt
+Stmt    ->  loc = expr ; | if ( bool ) Stmt | if ( bool ) Stmt else Stmt | while ( bool ) Stmt
+   |   do Stmt while ( bool ) ; | break ; | { Decls Stmts } | choose { Branchs }
+Branchs ->  e | Branchs num : Stmt
+bool    ->  bool or bool | bool and bool | ! bool | ( bool ) | expr rel expr | true | false
+expr    ->  expr + expr | expr - expr | expr * expr | expr / expr | loc | ( bool ) | num
+loc     ->  loc [ bool ] | id
 
 
 Package lexer
