@@ -1,0 +1,14 @@
+Why Python?
+
+    Simplicity: Python allows rapid development with clear, concise code.
+    Parsing Ease: Tools like ply (Python Lex-Yacc) or lark make building parsers and interpreters straightforward.
+    Rich standard library for handling strings, collections, and I/O operations, crucial for interpreter implementations.
+
+Libraries/Tools:
+
+    ply: A simple lex/yacc implementation, great for quick parser and lexer generation.
+    lark: Easy-to-use, declarative parsing framework.
+
+Use Case:
+
+    Quick prototyping, experimenting with language features, or educational projects.

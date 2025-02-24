@@ -1,5 +1,10 @@
+# Java
+
 *.class
 tmp/
 tmp.*
 temp.*
 temp/
+
+# Python
+__pycache__/
