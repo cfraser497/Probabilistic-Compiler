@@ -29,6 +29,7 @@ jobs:
 
       - name: Run Java test suite
         run: |
+          cd front
           make test
 
 #   test-python:
