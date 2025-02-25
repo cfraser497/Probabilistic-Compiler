@@ -1,0 +1,51 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-java:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Run Java test suite
+        run: |
+          cd front
+          make test
+
+#   test-python:
+#     runs-on: ubuntu-latest
+#     if: always()  # This allows the job to be added now but not fail if interpreter tests don't exist yet
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: "3.9"
+
+#       - name: Install Python dependencies
+#         run: |
+#           cd interpreter
+#           pip install -r requirements.txt || echo "No requirements file found"
+
+#       - name: Run Python tests
+#         run: |
+#           cd interpreter
+#           pytest || echo "No tests found"
