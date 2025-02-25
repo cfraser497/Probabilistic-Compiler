@@ -9,7 +9,8 @@ compile:
 
 
 test:
-	@total=0; passed=0; \
+	@mkdir -p tmp
+	@total=0; passed=0; failed=0; \
 	for file in $$(find tests -type f -name '*.t'); do \
 		base=$$(basename $$file .t); \
 		dir=$$(dirname $$file); \
@@ -21,6 +22,7 @@ test:
 		else \
 			echo "\033[0;31mFAILED\033[0m"; \
 			diff $$dir/$$base.i tmp/$$base.i; \
+			failed=$$((failed + 1)); \
 		fi; \
 		total=$$((total + 1)); \
 	done; \
@@ -29,7 +31,12 @@ test:
 		echo "No tests found."; \
 	else \
 		echo "Test Summary: $$passed / $$total tests passed ("$$((100 * passed / total))"%)"; \
+	fi; \
+	\
+	if [ $$failed -gt 0 ]; then \
+		exit 1; \
 	fi
+
 
 clean:
 	(cd lexer; rm *.class)

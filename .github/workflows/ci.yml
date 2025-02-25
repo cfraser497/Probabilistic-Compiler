@@ -22,9 +22,13 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Run Java test suite
+      - name: Build Java Compiler
         run: |
           cd front
+          make
+
+      - name: Run Java test suite
+        run: |
           make test
 
 #   test-python:
