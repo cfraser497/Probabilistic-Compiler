@@ -10,6 +10,7 @@ class Parser:
     def match(self, tag):
         if self.lookahead.tag == tag:
             self.lookahead = self.lexer.scan()
+            # print(self.lookahead.tag)
         else:
             raise SyntaxError(f"Expected {tag}, found {self.lookahead.tag}")
 
@@ -34,8 +35,8 @@ class Parser:
     def parse_instruction(self, labels):
         if self.lookahead.tag == Tag.ID:
             return self.parse_id_starting_instruction(labels)
-        elif self.lookahead.tag == Tag.IF_FALSE:
-            return self.parse_if_false(labels)
+        elif self.lookahead.tag == Tag.IF or self.lookahead.tag == Tag.IF_FALSE:
+            return self.parse_if(labels)
         elif self.lookahead.tag == Tag.GOTO:
             return self.parse_goto(labels)
         else:
@@ -50,83 +51,89 @@ class Parser:
         elif self.lookahead.tag == Tag.LBRACKET:
             return self.parse_arr_assign(labels, target)
         else:
+            print(self.lookahead.tag)
             raise SyntaxError(f"Unexpected token after ID: {self.lookahead.tag}")
+
+    def parse_signed_op(self, allow_real=True, allow_bool=True):
+        tag, value = self.lookahead.tag, self.lookahead.value
+        if allow_bool and tag == Tag.TRUE or tag == Tag.FALSE:
+            self.match(tag)
+            return tag
+
+        sign = 1
+        if self.lookahead.tag == Tag.MINUS:
+            self.match(Tag.MINUS)
+            sign = -1
+        
+        if self.lookahead.tag == Tag.NUM:
+            value = self.lookahead.value
+            self.match(Tag.NUM)
+            return sign * value
+        
+        elif allow_real and self.lookahead.tag == Tag.REAL:
+            value = self.lookahead.value
+            self.match(Tag.REAL)
+            return sign * value
+
+        elif self.lookahead.tag == Tag.ID:
+            value = self.lookahead.value
+            self.match(Tag.ID)
+            if sign == -1:
+                return f"-{value}"
+            return value
+        else:
+            raise SyntaxError(f"Unexpected Tag, got {self.lookahead.tag}")
+
 
     def parse_assign(self, labels, target):
         self.match(Tag.ASSIGN)
 
-        if self.lookahead.tag == Tag.ID:
-            source = self.lookahead.value
-            self.match(Tag.ID)
+        source = self.parse_signed_op()
 
-            if self.lookahead.tag in (Tag.PLUS, Tag.MINUS, Tag.MUL, Tag.DIV, Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE):
-                return self.parse_binary_op(labels, target, source)
+        if self.lookahead.tag in (Tag.PLUS, Tag.MINUS, Tag.MUL, Tag.DIV, Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE):
+            return self.parse_binary_op(labels, target, source)
 
-            elif self.lookahead.tag == Tag.LBRACKET:
-                return self.parse_array_read(labels, target, source)
+        elif self.lookahead.tag == Tag.LBRACKET:
+            return self.parse_array_read(labels, target, source)
 
-            else:
-                return Assign(labels, target, source)
+        return Assign(labels, target, source)
 
-        elif self.lookahead.tag == Tag.NUM:
-            source = self.lookahead.value
-            self.match(Tag.NUM)
-            return Assign(labels, target, source)
-        else:
-            raise SyntaxError(f"Invalid assignment target: {self.lookahead.tag}")
 
     def parse_binary_op(self, labels, target, arg1):
         op = self.lookahead.tag
         self.match(op)
 
-        arg2 = self.lookahead.value
-        if self.lookahead.tag == Tag.ID:
-            self.match(Tag.ID)
-        elif self.lookahead.tag == Tag.NUM:
-            self.match(Tag.NUM)
-        else:
-            raise SyntaxError(f"Invalid operand in binary operation: {self.lookahead.tag}")
+        arg2 = self.parse_signed_op()
 
         return BinaryOp(labels, target, op, arg1, arg2)
 
     def parse_arr_assign(self, labels, array_name):
         self.match(Tag.LBRACKET)
-        index = self.lookahead.value
-        if self.lookahead.tag in (Tag.ID, Tag.NUM):
-            self.match(self.lookahead.tag)
-        else:
-            raise SyntaxError("Expected ID or NUM as index")
+        index = self.parse_signed_op(allow_real=False, allow_bool=False)
         self.match(Tag.RBRACKET)
 
         self.match(Tag.ASSIGN)
 
-        value = self.lookahead.value
-        if self.lookahead.tag in (Tag.ID, Tag.NUM):
-            self.match(self.lookahead.tag)
-        else:
-            raise SyntaxError("Expected ID or NUM as value")
+        value = self.parse_signed_op()
 
         return ArrayAssign(labels, array_name, index, value)
 
     def parse_array_read(self, labels, target, array_name):
         self.match(Tag.LBRACKET)
-        index = self.lookahead.value
-        if self.lookahead.tag in (Tag.ID, Tag.NUM):
-            self.match(self.lookahead.tag)
-        else:
-            raise SyntaxError("Expected ID or NUM as array index")
+        index = self.parse_signed_op(allow_bool=False, allow_real=False)
         self.match(Tag.RBRACKET)
 
         return ArrayRead(labels, target, array_name, index)
 
-    def parse_if_false(self, labels):
-        self.match(Tag.IF_FALSE)
+    def parse_if(self, labels):
+        iftag = self.lookahead.tag
+        self.match(iftag)
 
         left = self.lookahead.value
         self.match(self.lookahead.tag)
 
         op = self.lookahead.tag
-        if op in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE):
+        if op in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE, Tag.NEQ):
             self.match(op)
         else:
             raise SyntaxError("Invalid conditional operator in ifFalse")
@@ -139,30 +146,9 @@ class Parser:
         target_label = self.lookahead.value
         self.match(Tag.ID)
 
+        if iftag == Tag.IF:
+            return IfGoto(labels, left, op, right, target_label)
         return IfFalseGoto(labels, left, op, right, target_label)
-
-    def parse_if_true(self, labels):
-        self.match(Tag.IF_TRUE)
-
-        left = self.lookahead.value
-        self.match(self.lookahead.tag)
-
-        op = self.lookahead.tag
-        if op in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE):
-            self.match(op)
-        else:
-            raise SyntaxError("Invalid conditional operator in ifTrue")
-
-        right = self.lookahead.value
-        self.match(self.lookahead.tag)
-
-        self.match(Tag.GOTO)
-
-        target_label = self.lookahead.value
-        self.match(Tag.ID)
-
-        return IfTrueGoto(labels, left, op, right, target_label)
-
 
     def parse_goto(self, labels):
         self.match(Tag.GOTO)

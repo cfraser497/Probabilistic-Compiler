@@ -1,3 +1,5 @@
+from tokens.tokens import Tag
+
 class Environment:
     def __init__(self, instructions):
         self.memory = {}
@@ -14,11 +16,16 @@ class Environment:
         return labels
 
     def get_value(self, identifier):
-        if isinstance(identifier, int):
+        if isinstance(identifier, int) or isinstance(identifier, float):
             return identifier
         if isinstance(identifier, str) and identifier.isdigit():
             return int(identifier)
-        return self.memory.get(identifier, 0)
+        # handle negative values e.g. -x
+        if identifier[0] == "-":
+            return self.memory.get(identifier[1:])
+        if identifier == Tag.TRUE or identifier == Tag.FALSE:
+            return identifier
+        return self.memory.get(identifier)
 
     def set_value(self, identifier, value):
         self.memory[identifier] = value

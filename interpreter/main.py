@@ -17,17 +17,17 @@ def main():
     
     lexer = Lexer(code)
 
-    token = lexer.scan()
-    while token.tag != 'EOF':
-        print(token)
-        token = lexer.scan() 
+    # token = lexer.scan()
+    # while token.tag != 'EOF':
+    #     print(token)
+    #     token = lexer.scan() 
 
     parser = Parser(lexer)
 
     instructions = parser.parse()
 
     # for instr in instructions:
-        # print(instr.__class__.__name__, vars(instr))
+    #     print(instr.__class__.__name__, vars(instr))
 
     env = Environment(instructions)
     execute(env)

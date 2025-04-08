@@ -7,9 +7,11 @@ class Lexer:
         self.index = 0
         self.peek = ' '
         self.words = {
-            "ifFalse": Token(Tag.IF_FALSE),
-            "ifTrue": Token(Tag.IF_TRUE),
+            "iffalse": Token(Tag.IF_FALSE),
+            "if": Token(Tag.IF),
             "goto": Token(Tag.GOTO),
+            "true": Token(Tag.TRUE),
+            "false": Token(Tag.FALSE)
         }
 
     def readch(self):
@@ -37,10 +39,10 @@ class Lexer:
             return Token(Tag.EOF)
 
         # Handle composite operators
-        if self.peek in {'<', '>', '='}:
+        if self.peek in {'<', '>', '=', '!'}:
             char = self.peek
             if self.readch_match('='):
-                tok = Token({'<':'<=', '>':'>=', '=':'=='}.get(char))
+                tok = Token({'<':'<=', '>':'>=', '=':'==', '!': '!='}.get(char))
                 return tok
             tok = Token(char)
             self.peek = ' '

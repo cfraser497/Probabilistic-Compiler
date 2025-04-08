@@ -14,8 +14,10 @@ def execute(env):
                 '*': lambda a, b: a * b, '/': lambda a, b: a // b,
                 '<': lambda a, b: int(a < b), '>': lambda a, b: int(a > b),
                 '<=': lambda a, b: int(a <= b), '>=': lambda a, b: int(a >= b),
-                '==': lambda a, b: int(a == b)
+                '==': lambda a, b: int(a == b), '!=': lambda a, b: int(a != b)
             }
+            # print(f"ARG1: {env.get_value(instr.arg1)}")
+            # print(f"ARG2: {env.get_value(instr.arg2)}")
             result = ops[instr.op](env.get_value(instr.arg1), env.get_value(instr.arg2))
             env.set_value(instr.target, result)
 
@@ -23,11 +25,23 @@ def execute(env):
             condition = {
                 '<': lambda a, b: a < b, '>': lambda a, b: a > b,
                 '<=': lambda a, b: a <= b, '>=': lambda a, b: a >= b,
-                '==': lambda a, b: a == b
+                '==': lambda a, b: a == b, '!=': lambda a, b: a != b
             }[instr.condition_op](env.get_value(instr.condition_left), env.get_value(instr.condition_right))
 
             if not condition:
-                print(env.labels)
+                # print(env.labels)
+                env.pc = env.labels[instr.target_label]
+                continue
+
+        elif isinstance(instr, IfGoto):
+            condition = {
+                '<': lambda a, b: a < b, '>': lambda a, b: a > b,
+                '<=': lambda a, b: a <= b, '>=': lambda a, b: a >= b,
+                '==': lambda a, b: a == b, '!=': lambda a, b: a != b
+            }[instr.condition_op](env.get_value(instr.condition_left), env.get_value(instr.condition_right))
+
+            if condition:
+                # print(env.labels)
                 env.pc = env.labels[instr.target_label]
                 continue
 
@@ -46,3 +60,5 @@ def execute(env):
             env.set_value(instr.target, val)
 
         env.pc += 1
+
+        # print(env.memory)
