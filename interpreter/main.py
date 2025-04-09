@@ -32,7 +32,10 @@ def main():
     env = Environment(instructions)
     execute(env)
 
-    print("Final memory state:", env.memory)
+    print("Final memory state:")
+
+    for k, v in env.memory.items():
+        print(f"{k}: {v}")
 
 if __name__ == "__main__":
     main()

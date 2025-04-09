@@ -136,7 +136,7 @@ class Parser:
         if op in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE, Tag.NEQ):
             self.match(op)
         else:
-            raise SyntaxError("Invalid conditional operator in ifFalse")
+            raise SyntaxError("Invalid conditional operator in iffalse")
 
         right = self.lookahead.value
         self.match(self.lookahead.tag)
