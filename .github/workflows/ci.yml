@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Java test suite
         run: |
-          make test
+          make test_compiler
 
 #   test-python:
 #     runs-on: ubuntu-latest
