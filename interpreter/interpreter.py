@@ -21,27 +21,13 @@ def execute(env):
             result = ops[instr.op](env.get_value(instr.arg1), env.get_value(instr.arg2))
             env.set_value(instr.target, result)
 
-        elif isinstance(instr, IfFalseGoto):
-            condition = {
-                '<': lambda a, b: a < b, '>': lambda a, b: a > b,
-                '<=': lambda a, b: a <= b, '>=': lambda a, b: a >= b,
-                '==': lambda a, b: a == b, '!=': lambda a, b: a != b
-            }[instr.condition_op](env.get_value(instr.condition_left), env.get_value(instr.condition_right))
-
-            if not condition:
-                # print(env.labels)
+        elif isinstance(instr, IfGoto):
+            if evaluate_condition(instr, env):
                 env.pc = env.labels[instr.target_label]
                 continue
 
-        elif isinstance(instr, IfGoto):
-            condition = {
-                '<': lambda a, b: a < b, '>': lambda a, b: a > b,
-                '<=': lambda a, b: a <= b, '>=': lambda a, b: a >= b,
-                '==': lambda a, b: a == b, '!=': lambda a, b: a != b
-            }[instr.condition_op](env.get_value(instr.condition_left), env.get_value(instr.condition_right))
-
-            if condition:
-                # print(env.labels)
+        elif isinstance(instr, IfFalseGoto):
+            if not evaluate_condition(instr, env):
                 env.pc = env.labels[instr.target_label]
                 continue
 
@@ -62,3 +48,21 @@ def execute(env):
         env.pc += 1
 
         # print(env.memory)
+
+
+def evaluate_condition(instr, env):
+    if instr.op is None:
+        # Boolean-only conditional: use left as boolean value
+        return bool(env.get_value(instr.left))
+    else:
+        a = env.get_value(instr.left)
+        b = env.get_value(instr.right)
+        op_func = {
+            '<': lambda x, y: x < y,
+            '>': lambda x, y: x > y,
+            '<=': lambda x, y: x <= y,
+            '>=': lambda x, y: x >= y,
+            '==': lambda x, y: x == y,
+            '!=': lambda x, y: x != y
+        }[instr.op]
+        return op_func(a, b)

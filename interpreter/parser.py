@@ -132,17 +132,18 @@ class Parser:
         left = self.lookahead.value
         self.match(self.lookahead.tag)
 
-        op = self.lookahead.tag
-        if op in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE, Tag.NEQ):
+        if self.lookahead.tag in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE, Tag.NEQ):
+            op = self.lookahead.tag
             self.match(op)
-        else:
-            raise SyntaxError("Invalid conditional operator in iffalse")
 
-        right = self.lookahead.value
-        self.match(self.lookahead.tag)
+            right = self.lookahead.value
+            self.match(self.lookahead.tag)
+        else:
+            # Boolean only: e.g. if b goto L2
+            op = None
+            right = None
 
         self.match(Tag.GOTO)
-
         target_label = self.lookahead.value
         self.match(Tag.ID)
 
