@@ -1,40 +1,44 @@
-L1:L4:	a = 0
-L3:	goto L5
-L6:	x = 0
-L5:	iffalse a < b goto L7
-L8:	a = b
-L7:	iffalse x <= y goto L9
-L10:	x = y
-L9:	iffalse a == b goto L11
+L1:	x = 1
+L3:	y = 2
+L4:	a = 3
+L5:	b = 4
+L6:L8:	a = 0
+L7:	goto L9
+L10:	x = 0
+L9:	iffalse a < b goto L11
 L12:	a = b
-L11:	iffalse x != y goto L13
+L11:	iffalse x <= y goto L13
 L14:	x = y
-L13:	iffalse a >= b goto L15
-L16:	b = a
-L15:	iffalse x > y goto L17
-L18:	y = x
-L17:	iffalse a == b goto L19
-L20:L19:	if x < 100 goto L23
-	iffalse x > 200 goto L21
-L23:L22:	x = 0
-L21:	iffalse a < 100 goto L24
-	iffalse a > 200 goto L24
-L25:	b = 0
-L24:	if x < 100 goto L28
-	iffalse x > 200 goto L26
-	iffalse x != y goto L26
-L28:L27:	x = 0
-L26:	if a < 100 goto L31
-	iffalse a > 200 goto L32
-	if a != 150 goto L31
-L32:	iffalse a != 0 goto L29
-L31:L30:	a = 0
-L29:	iffalse x > 200 goto L36
-	if x != b goto L35
-L36:	iffalse x < 100 goto L33
-L35:L34:	x = 0
-L33:	if a < 100 goto L38
+L13:	iffalse a == b goto L15
+L16:	a = b
+L15:	iffalse x != y goto L17
+L18:	x = y
+L17:	iffalse a >= b goto L19
+L20:	b = a
+L19:	iffalse x > y goto L21
+L22:	y = x
+L21:	iffalse a == b goto L23
+L24:L23:	if x < 100 goto L27
+	iffalse x > 200 goto L25
+L27:L26:	x = 0
+L25:	iffalse a < 100 goto L28
+	iffalse a > 200 goto L28
+L29:	b = 0
+L28:	if x < 100 goto L32
+	iffalse x > 200 goto L30
+	iffalse x != y goto L30
+L32:L31:	x = 0
+L30:	if a < 100 goto L35
+	iffalse a > 200 goto L36
+	if a != 150 goto L35
+L36:	iffalse a != 0 goto L33
+L35:L34:	a = 0
+L33:	iffalse x > 200 goto L40
+	if x != b goto L39
+L40:	iffalse x < 100 goto L37
+L39:L38:	x = 0
+L37:	if a < 100 goto L42
 	iffalse a > 200 goto L2
 	iffalse a != b goto L2
-L38:L37:	a = 0
+L42:L41:	a = 0
 L2:

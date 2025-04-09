@@ -1,5 +1,9 @@
 {
 	int r; int dd; int a; int d;
+
+	a = 50;
+	d = 5;
+	
 	r = a; dd = d;
 	while( dd <= r ) dd = 2*dd;
 	while( dd != r ) {

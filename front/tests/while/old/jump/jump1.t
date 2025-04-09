@@ -1,6 +1,11 @@
 {
         int x; int y; int a; int b;
 
+	x = 1;
+	y = 2;
+	a = 3;
+	b = 4;
+
 	if( true ) a = 0;
 
 	if( false ) x = 0;

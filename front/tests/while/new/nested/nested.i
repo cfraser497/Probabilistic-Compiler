@@ -1,21 +1,31 @@
-L1:	r = a
-L3:	dd = d
-L4:	iffalse dd <= r goto L5
-L6:	dd = 2 * dd
-	goto L4
-L5:	iffalse dd != r goto L7
-L8:	dd = dd / 2
-L9:	iffalse dd <= r goto L5
-L10:	r = r - dd
-	goto L5
-L7:	prod = 0
-L11:	i = 1
-L12:	t1 = i * 8
-	t2 = a [ t1 ]
-	t3 = i * 8
-	t4 = b [ t3 ]
-	t5 = t2 * t4
-	prod = prod + t5
-L14:	i = i + 1
-L13:	if i <= 20 goto L12
+L1:	a = 50
+L3:	d = 5
+L4:	r = a
+L5:	dd = d
+L6:	iffalse dd <= r goto L7
+L8:	dd = 2 * dd
+	goto L6
+L7:	iffalse dd != r goto L9
+L10:	dd = dd / 2
+L11:	iffalse dd <= r goto L7
+L12:	r = r - dd
+	goto L7
+L9:	prod = 0
+L13:	i = 1
+L14:	iffalse i < 20 goto L15
+L16:	t1 = i * 8
+	a [ t1 ] = 2.0
+L17:	t2 = i * 8
+	b [ t2 ] = 3.0
+L18:	i = i + 1
+	goto L14
+L15:	i = 1
+L19:	t3 = i * 8
+	t4 = a [ t3 ]
+	t5 = i * 8
+	t6 = b [ t5 ]
+	t7 = t4 * t6
+	prod = prod + t7
+L21:	i = i + 1
+L20:	if i <= 20 goto L19
 L2:

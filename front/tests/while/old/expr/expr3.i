@@ -1,19 +1,21 @@
-L1:	if x < y goto L4
+L1:	x = 1
+L3:	y = 2
+L4:	if x < y goto L6
 	t1 = true
-	goto L5
-L4:	t1 = false
-L5:	r = t1
-L3:	iffalse x == y goto L7
+	goto L7
+L6:	t1 = false
+L7:	r = t1
+L5:	iffalse x == y goto L9
 	t2 = true
-	goto L8
-L7:	t2 = false
-L8:	r = t2
-L6:	if x > y goto L11
-L10:	r = true
-	goto L9
-L11:	r = false
-L9:	iffalse x != y goto L13
+	goto L10
+L9:	t2 = false
+L10:	r = t2
+L8:	if x > y goto L13
 L12:	r = true
-	goto L2
+	goto L11
 L13:	r = false
+L11:	iffalse x != y goto L15
+L14:	r = true
+	goto L2
+L15:	r = false
 L2:

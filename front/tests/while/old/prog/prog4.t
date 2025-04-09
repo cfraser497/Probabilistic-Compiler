@@ -6,5 +6,6 @@
 		else if( peek == NEWLINE ) line = line + 1;
 		else break;
 		peek = readch;
+		break;
 	}
 }

@@ -1,11 +1,13 @@
-L1:	r = a
-L3:	dd = d
-L4:	iffalse dd <= r goto L5
-L6:	dd = 2 * dd
-	goto L4
-L5:	iffalse dd != r goto L2
-L7:	dd = dd / 2
-L8:	iffalse dd <= r goto L5
-L9:	r = r - dd
-	goto L5
+L1:	a = 50
+L3:	d = 5
+L4:	r = a
+L5:	dd = d
+L6:	iffalse dd <= r goto L7
+L8:	dd = 2 * dd
+	goto L6
+L7:	iffalse dd != r goto L2
+L9:	dd = dd / 2
+L10:	iffalse dd <= r goto L7
+L11:	r = r - dd
+	goto L7
 L2:

@@ -1,5 +1,8 @@
 {
-	bool a; bool b; a = true; b = false;
+	bool a; bool b; 
+    
+    a = true; 
+    b = false;
 
     a = !b;
 }

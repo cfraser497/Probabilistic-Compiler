@@ -6,5 +6,6 @@ L8:	line = line + 1
 	goto L4
 L9:	goto L2
 L4:	peek = readch
+L10:	goto L2
 	goto L1
 L2:
