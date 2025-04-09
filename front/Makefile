@@ -9,8 +9,9 @@ compile:
 
 
 test:
-	@mkdir -p tmp
-	@total=0; passed=0; failed=0; \
+	@mkdir -p tmp \
+	trap 'rm -rf tmp' EXIT; \
+	total=0; passed=0; failed=0; \
 	for file in $$(find tests -type f -name '*.t'); do \
 		base=$$(basename $$file .t); \
 		dir=$$(dirname $$file); \
