@@ -1,5 +1,6 @@
 # interpreter.py
 from instructions import *
+from tokens.tokens import Tag
 
 def execute(env):
     while env.pc < len(env.instructions):
@@ -47,16 +48,17 @@ def execute(env):
 
         env.pc += 1
 
-        # print(env.memory)
+        # print(f"{env.pc}: {env.memory}")
 
 
 def evaluate_condition(instr, env):
     if instr.op is None:
         # Boolean-only conditional: use left as boolean value
-        return bool(env.get_value(instr.left))
+        return True if env.get_value(instr.left) == Tag.TRUE else False
     else:
         a = env.get_value(instr.left)
         b = env.get_value(instr.right)
+
         op_func = {
             '<': lambda x, y: x < y,
             '>': lambda x, y: x > y,
