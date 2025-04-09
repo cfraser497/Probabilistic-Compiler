@@ -24,12 +24,10 @@ jobs:
 
       - name: Build Java Compiler
         run: |
-          cd front
           make
 
       - name: Run Java test suite
         run: |
-          cd front
           make test
 
 #   test-python:
