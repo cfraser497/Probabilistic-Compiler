@@ -13,20 +13,30 @@ compiler:
 
 # === Test Entrypoint ===
 test:
+	@mkdir -p tmp
 	@bash -c '\
 	$(SHELL_SETUP) \
+	echo -n "" > tmp/test_results; \
 	echo -e "$$cyan==> Running compiler tests...$$reset";' && \
 	$(MAKE) test_compiler && \
 	bash -c '\
 	$(SHELL_SETUP) \
 	echo -e "$$cyan==> Running interpreter tests...$$reset";' && \
-	$(MAKE) test_interpreter
+	$(MAKE) test_interpreter && \
+	bash -c '\
+	$(SHELL_SETUP) \
+	source tmp/test_results; \
+	total_passed=$$((compiler_passed + interpreter_passed)); \
+	total_tests=$$((compiler_total + interpreter_total)); \
+	echo ""; \
+	echo -e "$$cyan==> Total Test Coverage: $$green$$total_passed / $$total_tests$$reset ("$$((100 * total_passed / total_tests))"%)"; \
+	rm -rf tmp'
 
 # === Compiler Test ===
 test_compiler:
 	@bash -c '\
 	mkdir -p tmp; \
-	trap "rm -rf tmp" EXIT; \
+	trap "rm -rf tmp/*.i" EXIT; \
 	$(SHELL_SETUP) \
 	total=0; passed=0; failed=0; \
 	for file in $$(find tests -type f -name "*.t"); do \
@@ -50,16 +60,18 @@ test_compiler:
 	else \
 		echo "Test Summary: $$passed / $$total tests passed ("$$((100 * passed / total))"%)"; \
 	fi; \
+	echo "compiler_passed=$$passed" >> tmp/test_results; \
+	echo "compiler_total=$$total" >> tmp/test_results; \
 	if [ $$failed -gt 0 ]; then exit 1; fi'
 
 # === Interpreter Test ===
 test_interpreter:
 	@bash -c '\
 	mkdir -p tmp; \
-	trap "rm -rf tmp" EXIT; \
+	trap "rm -rf tmp/*.pwhile" EXIT; \
 	$(SHELL_SETUP) \
 	total=0; passed=0; failed=0; \
-	for file in $$(find tests -type f -name "*.i"); do \
+	for file in $$(find tests/while -type f -name "*.i"); do \
 		base=$$(basename $$file .i); \
 		dir=$$(dirname $$file); \
 		echo -n "Running interpreter test: $$file ... "; \
@@ -80,6 +92,8 @@ test_interpreter:
 	else \
 		echo "Interpreter Test Summary: $$passed / $$total tests passed ("$$((100 * passed / total))"%)"; \
 	fi; \
+	echo "interpreter_passed=$$passed" >> tmp/test_results; \
+	echo "interpreter_total=$$total" >> tmp/test_results; \
 	if [ $$failed -gt 0 ]; then exit 1; fi'
 
 # === Clean ===
@@ -89,6 +103,7 @@ clean:
 	rm -f $(SRC_DIR)/inter/*.class
 	rm -f $(SRC_DIR)/parser/*.class
 	rm -f $(SRC_DIR)/main/*.class
+	rm -rf tmp
 
 # === YACC ===
 yacc:
