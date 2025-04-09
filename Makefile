@@ -40,6 +40,34 @@ test_compiler:
 		exit 1; \
 	fi
 
+test_interpreter:
+	@bash -c '\
+	mkdir -p tmp; \
+	trap "rm -rf tmp" EXIT; \
+	total=0; passed=0; failed=0; \
+	for file in $$(find tests -type f -name "*.i"); do \
+		base=$$(basename $$file .i); \
+		dir=$$(dirname $$file); \
+		echo -n "Running interpreter test: $$file ... "; \
+		python3 interpreter/main.py $$file > tmp/$$base.pwhile; \
+		if diff $$dir/$$base.pwhile tmp/$$base.pwhile > /dev/null; then \
+			echo -e "\033[0;32mPASSED\033[0m"; \
+			passed=$$((passed + 1)); \
+		else \
+			echo -e "\033[0;31mFAILED\033[0m"; \
+			diff $$dir/$$base.pwhile tmp/$$base.pwhile; \
+			failed=$$((failed + 1)); \
+		fi; \
+		total=$$((total + 1)); \
+	done; \
+	echo ""; \
+	if [ $$total -eq 0 ]; then \
+		echo "No interpreter tests found."; \
+	else \
+		echo "Interpreter Test Summary: $$passed / $$total tests passed ("$$((100 * passed / total))"%)"; \
+	fi; \
+	if [ $$failed -gt 0 ]; then exit 1; fi'
+
 
 clean:
 	rm -f $(SRC_DIR)/lexer/*.class
