@@ -1,14 +1,16 @@
-build: compile
+SRC_DIR := front
 
-compile:
-	javac lexer/*.java
-	javac symbols/*.java
-	javac inter/*.java
-	javac parser/*.java
-	javac main/*.java
+build: compiler
+
+compiler:
+	@find $(SRC_DIR) -name "*.java" > sources.txt
+	javac -d $(SRC_DIR) @sources.txt
+	@rm sources.txt
 
 
-test:
+test: test_compiler
+
+test_compiler:
 	@mkdir -p tmp 
 	@trap 'rm -rf tmp' EXIT; \
 	total=0; passed=0; failed=0; \
@@ -16,7 +18,7 @@ test:
 		base=$$(basename $$file .t); \
 		dir=$$(dirname $$file); \
 		echo -n "Running test: $$file ... "; \
-		java main.Main < $$file > tmp/$$base.i; \
+		java -cp $(SRC_DIR) main.Main < $$file > tmp/$$base.i; \
 		if diff $$dir/$$base.i tmp/$$base.i > /dev/null; then \
 			echo "\033[0;32mPASSED\033[0m"; \
 			passed=$$((passed + 1)); \
@@ -40,13 +42,12 @@ test:
 
 
 clean:
-	(cd lexer; rm *.class)
-	(cd symbols; rm *.class)
-	(cd inter; rm *.class)
-	(cd parser; rm *.class)
-	(cd main; rm *.class)
+	rm -f $(SRC_DIR)/lexer/*.class
+	rm -f $(SRC_DIR)/symbols/*.class
+	rm -f $(SRC_DIR)/inter/*.class
+	rm -f $(SRC_DIR)/parser/*.class
+	rm -f $(SRC_DIR)/main/*.class
 
 yacc:
-	/usr/ccs/bin/yacc -v doc/front.y
-	rm y.tab.c
-	mv y.output doc
+	cd $(SRC_DIR) && /usr/ccs/bin/yacc -v doc/front.y && \
+	rm y.tab.c && mv y.output doc
