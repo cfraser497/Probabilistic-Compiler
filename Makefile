@@ -70,12 +70,12 @@ test_interpreter:
 	mkdir -p tmp; \
 	trap "rm -rf tmp/*.pwhile" EXIT; \
 	$(SHELL_SETUP) \
-	total=0; passed=0; failed=0; \
-	for file in $$(find tests/while -type f -name "*.i"); do \
+	total=0; passed=0; failed=0; seed=42;\
+	for file in $$(find tests -type f -name "*.i"); do \
 		base=$$(basename $$file .i); \
 		dir=$$(dirname $$file); \
 		echo -n "Running interpreter test: $$file ... "; \
-		python3 interpreter/main.py $$file > tmp/$$base.pwhile; \
+		python3 interpreter/main.py $$file --seed=$$seed > tmp/$$base.pwhile; \
 		if diff $$dir/$$base.pwhile tmp/$$base.pwhile > /dev/null; then \
 			echo -e "$$green PASSED $$reset"; \
 			passed=$$((passed + 1)); \
