@@ -25,7 +25,7 @@ public class Choose extends Stmt {
 
             int label = newlabel();
             branch.setLabel(label);
-            flipInstruction.append(branch.getProb() + "/" + totalWeight + " goto L" + label);
+            flipInstruction.append(branch.getProb() + " goto L" + label);
             if (i != branches.size() - 1) {
                 flipInstruction.append(" ");
             }
