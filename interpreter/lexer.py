@@ -11,7 +11,8 @@ class Lexer:
             "if": Token(Tag.IF),
             "goto": Token(Tag.GOTO),
             "true": Token(Tag.TRUE),
-            "false": Token(Tag.FALSE)
+            "false": Token(Tag.FALSE),
+            "flip": Token(Tag.FLIP)
         }
 
     def readch(self):

@@ -39,6 +39,8 @@ class Parser:
             return self.parse_if(labels)
         elif self.lookahead.tag == Tag.GOTO:
             return self.parse_goto(labels)
+        elif self.lookahead.tag == Tag.FLIP:
+            return self.parse_flip(labels)
         else:
             raise SyntaxError(f"Unexpected token: {self.lookahead.tag}")
 
@@ -156,3 +158,20 @@ class Parser:
         target_label = self.lookahead.value
         self.match(Tag.ID)
         return Goto(labels, target_label)
+    
+    def parse_flip(self, labels):
+        self.match(Tag.FLIP)
+        weights = []
+        target_labels = []
+
+        while self.lookahead.tag != Tag.LABEL:
+            weight = self.lookahead.value
+            weights.append(weight)
+            self.match(Tag.NUM)
+
+            self.match(Tag.GOTO)
+            label = self.lookahead.value
+            target_labels.append(label)
+            self.match(Tag.ID)
+
+        return Flip(labels, weights, target_labels)

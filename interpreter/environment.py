@@ -13,6 +13,7 @@ class Environment:
         for idx, instr in enumerate(instructions):
             for label in instr.labels:
                 labels[label] = idx
+
         return labels
 
     def get_value(self, identifier):

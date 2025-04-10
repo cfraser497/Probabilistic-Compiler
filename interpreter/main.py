@@ -1,4 +1,5 @@
 import sys
+import argparse
 
 from parser import Parser
 from environment import Environment
@@ -6,13 +7,13 @@ from interpreter import execute
 from lexer import Lexer
 
 def main():
-    if len(sys.argv) != 2:
-            print(f"Usage: {sys.argv[0]} <filename.i>")
-            sys.exit(1)
+    argparser = argparse.ArgumentParser(description="Run interpreter on input file.")
+    argparser.add_argument("filename", help="Path to the .i file to run.")
+    argparser.add_argument("--seed", type=int, help="Optional random seed for reproducibility.")
 
-    filename = sys.argv[1]
+    args = argparser.parse_args() 
 
-    with open(filename, 'r') as file:
+    with open(args.filename, 'r') as file:
         code = file.read()
     
     lexer = Lexer(code)
@@ -30,7 +31,7 @@ def main():
     #     print(instr.__class__.__name__, vars(instr))
 
     env = Environment(instructions)
-    execute(env)
+    execute(env, args.seed)
 
     print("Final memory state:")
 

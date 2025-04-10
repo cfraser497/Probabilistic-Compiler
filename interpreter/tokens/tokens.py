@@ -27,6 +27,7 @@ class Tag:
     IF = 'if'
     IF_FALSE = 'ifFalse'
     GOTO = 'goto'
+    FLIP = 'flip'
     COLON = ':'
     EOF = 'EOF'
     TRUE = 'true'

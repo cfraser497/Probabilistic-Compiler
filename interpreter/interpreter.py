@@ -1,8 +1,13 @@
 # interpreter.py
 from instructions import *
 from tokens.tokens import Tag
+import random
 
-def execute(env):
+def execute(env, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    
+    # Interperate Program!
     while env.pc < len(env.instructions):
         instr = env.instructions[env.pc]
 
@@ -45,6 +50,17 @@ def execute(env):
             idx = env.get_value(instr.index)
             val = env.arrays.get(instr.array_name, {}).get(idx, 0)
             env.set_value(instr.target, val)
+
+        elif isinstance(instr, Flip):
+            target_label = random.choices(instr.target_labels, weights=instr.weights, k=1)[0]
+            env.pc = env.labels[target_label]
+            continue
+
+        elif isinstance(instr, Empty):
+            pass
+
+        else:
+            raise SyntaxError("Unknown Instruction: " + instr.__class__.__name__)
 
         env.pc += 1
 
