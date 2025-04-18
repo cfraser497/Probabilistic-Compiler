@@ -1,4 +1,3 @@
-10
 .data:
   b: bool
   r: bool

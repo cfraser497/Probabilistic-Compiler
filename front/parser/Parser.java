@@ -19,7 +19,6 @@ public class Parser {
       this.minInt = Integer.parseInt(props.getProperty("minInt"));
       this.maxInt = Integer.parseInt(props.getProperty("maxInt"));
       
-      System.out.println(maxInt);
       lex = l; move(); 
    }
 

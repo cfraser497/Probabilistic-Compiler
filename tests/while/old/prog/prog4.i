@@ -1,4 +1,3 @@
-10
 .data:
   BLANK: int{-10..10}
   TAB: int{-10..10}

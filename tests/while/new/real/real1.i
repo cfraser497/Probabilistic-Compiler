@@ -1,4 +1,3 @@
-10
 .data:
   x: float
 .code:

@@ -1,4 +1,3 @@
-10
 .data:
   i: int{-10..10}
   prod: float
