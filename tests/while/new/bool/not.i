@@ -1,3 +1,8 @@
+10
+.data:
+  a: bool
+  b: bool
+.code:
 L1:	a = true
 L3:	b = false
 L4:	if b goto L5

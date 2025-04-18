@@ -1,3 +1,9 @@
+10
+.data:
+  i: int{-10..10}
+  j: int{-10..10}
+  a: [10] [10] float
+.code:
 L1:	i = 0
 L3:	iffalse i < 10 goto L4
 L5:	j = 0

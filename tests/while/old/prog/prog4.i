@@ -1,3 +1,12 @@
+10
+.data:
+  BLANK: int{-10..10}
+  TAB: int{-10..10}
+  NEWLINE: int{-10..10}
+  peek: int{-10..10}
+  line: int{-10..10}
+  readch: int{-10..10}
+.code:
 L1:L3:	if peek == BLANK goto L7
 	iffalse peek == TAB goto L6
 L7:L5:	goto L4

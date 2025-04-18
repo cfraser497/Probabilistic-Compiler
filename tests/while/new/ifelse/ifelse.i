@@ -1,3 +1,8 @@
+10
+.data:
+  a: int{-10..10}
+  b: int{-10..10}
+.code:
 L1:	a = 0
 L3:	b = 0
 L4:	iffalse a < b goto L7

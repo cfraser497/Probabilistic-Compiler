@@ -50,6 +50,8 @@ public class Lexer {
             if( readch('=') ) return Word.le;   else return new Token('<');
          case '>':
             if( readch('=') ) return Word.ge;   else return new Token('>');
+         case '.':
+            if( readch('.') ) return Word.dotdot; else return new Token('.');
       }
       if( Character.isDigit(peek) ) {
          int v = 0;

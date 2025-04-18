@@ -1,6 +1,8 @@
 package parser;
 import java.io.*; import lexer.*; import symbols.*; import inter.*; 
-import java.util.List; import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.ArrayList;
 
 public class Parser {
 
@@ -8,8 +10,18 @@ public class Parser {
    private Token look;   // lookahead tagen
    Env top = null;       // current or top symbol table
    int used = 0;         // storage used for declarations
+   
+   int minInt;
+   int maxInt;
+   List<Id> declaredVariables = new ArrayList<>();
 
-   public Parser(Lexer l) throws IOException { lex = l; move(); }
+   public Parser(Lexer l, Properties props) throws IOException { 
+      this.minInt = Integer.parseInt(props.getProperty("minInt"));
+      this.maxInt = Integer.parseInt(props.getProperty("maxInt"));
+      
+      System.out.println(maxInt);
+      lex = l; move(); 
+   }
 
    void move() throws IOException { look = lex.scan(); }
 
@@ -17,12 +29,13 @@ public class Parser {
 
    void match(int t) throws IOException {
       if( look.tag == t ) move();
-      else error("syntax error");
+      else error("Unexpected Token:" + look);
    }
 
    public void program() throws IOException {  // program -> block
-      Stmt s = block();
+      Stmt s = block(); emitdata();
       int begin = s.newlabel();  int after = s.newlabel();
+      System.out.println(".code:");
       s.emitlabel(begin);  s.gen(begin, after);  s.emitlabel(after);
    }
 
@@ -34,22 +47,79 @@ public class Parser {
    }
 
    void decls() throws IOException {
-
-      while( look.tag == Tag.BASIC ) {   // D -> type ID ;
-         Type p = type(); Token tok = look; match(Tag.ID); match(';');
-         Id id = new Id((Word)tok, p, used);
-         top.put( tok, id );
-         used = used + p.width;
+      while (look.tag == Tag.BASIC) {
+          TypeInfo typed = type();
+          Token tok = look;
+          match(Tag.ID);
+          match(';');
+  
+          Id id;
+          if (typed.range != null) {
+              id = new Id((Word) tok, typed.type, used, typed.range);
+          } else {
+              id = new Id((Word) tok, typed.type, used);
+          }
+  
+          top.put(tok, id);
+          declaredVariables.add(id);
+          used += typed.type.width;
       }
-   }
+  }
 
-   Type type() throws IOException {
-
-      Type p = (Type)look;            // expect look.tag == Tag.BASIC 
+   TypeInfo type() throws IOException {
+      Word word = (Word) look;
       match(Tag.BASIC);
-      if( look.tag != '[' ) return p; // T -> basic
-      else return dims(p);            // return array type
+  
+      Type base;
+      switch (word.lexeme) {
+          case "int": base = Type.Int; break;
+          case "float": base = Type.Float; break;
+          case "char": base = Type.Char; break;
+          case "bool": base = Type.Bool; break;
+          default: error("Unknown type"); return null;
+      }
+  
+      Range range = null;
+  
+      if (base == Type.Int) {
+          if (look.tag == '{') {
+              match('{');
+              if (look.tag != Tag.NUM) error("Expected number");
+              int first = ((Num) look).value;
+              move();
+  
+              if (look.tag == Tag.SPREAD) {
+                  match(Tag.SPREAD);
+                  if (look.tag != Tag.NUM) error("Expected number after '..'");
+                  int last = ((Num) look).value;
+                  move();
+                  match('}');
+                  range = new Range(base, first, last);
+              } else {
+                  List<Integer> values = new ArrayList<>();
+                  values.add(first);
+                  while (look.tag == ',') {
+                      match(',');
+                      if (look.tag != Tag.NUM) error("Expected number");
+                      values.add(((Num) look).value);
+                      move();
+                  }
+                  match('}');
+                  if (values.size() > 256) error("Too many values");
+                  range = new Range(base, values);
+              }
+          } else {
+              range = new Range(base, minInt, maxInt);
+          }
+      }
+  
+      if (look.tag == '[') {
+          base = dims(base);
+      }
+  
+      return new TypeInfo(base, range);
    }
+
 
    Type dims(Type p) throws IOException {
       match('[');  Token tok = look;  match(Tag.NUM);  match(']');
@@ -256,5 +326,18 @@ public class Parser {
       }
 
       return new Access(a, loc, type);
+   }
+
+   void emitdata() {
+      System.out.println(".data:");
+      for (Id id : declaredVariables) {
+          String typeStr;
+          if (id.range != null) {
+              typeStr = id.range.toString(); // e.g., int{0..5}
+          } else {
+              typeStr = id.type.toString();
+          }
+          System.out.println("  " + id.toString() + ": " + typeStr);
+      }
    }
 }

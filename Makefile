@@ -6,31 +6,39 @@ SHELL_SETUP := green="\033[0;32m"; red="\033[0;31m"; cyan="\033[0;36m"; reset="\
 # === Build ===
 build: compiler
 
+# === Compile ===
 compiler:
+	@trap "rm sources.txt" EXIT;
 	@find $(SRC_DIR) -name "*.java" > sources.txt
 	javac -d $(SRC_DIR) @sources.txt
-	@rm sources.txt
+
+run: compiler
+	@if [ -z "$(file)" ]; then \
+		echo "Usage: make run file=<your_input_file>"; \
+		exit 1; \
+	fi; \
+	cd $(SRC_DIR) && java main.Main < ../$(file)
+
+
 
 # === Test Entrypoint ===
 test:
 	@mkdir -p tmp
 	@bash -c '\
-	$(SHELL_SETUP) \
-	echo -n "" > tmp/test_results; \
-	echo -e "$$cyan==> Running compiler tests...$$reset";' && \
-	$(MAKE) test_compiler && \
-	bash -c '\
-	$(SHELL_SETUP) \
-	echo -e "$$cyan==> Running interpreter tests...$$reset";' && \
-	$(MAKE) test_interpreter && \
-	bash -c '\
-	$(SHELL_SETUP) \
-	source tmp/test_results; \
-	total_passed=$$((compiler_passed + interpreter_passed)); \
-	total_tests=$$((compiler_total + interpreter_total)); \
-	echo ""; \
-	echo -e "$$cyan==> Total Test Coverage: $$green$$total_passed / $$total_tests$$reset ("$$((100 * total_passed / total_tests))"%)"; \
-	rm -rf tmp'
+		$(SHELL_SETUP) \
+		echo -n "" > tmp/test_results; \
+		echo -e "$$cyan==> Running compiler tests...$$reset"; \
+		$(MAKE) test_compiler; \
+		echo -e "$$cyan==> Running interpreter tests...$$reset"; \
+		$(MAKE) test_interpreter; \
+		source tmp/test_results; \
+		total_passed=$$((compiler_passed + interpreter_passed)); \
+		total_tests=$$((compiler_total + interpreter_total)); \
+		echo ""; \
+		echo -e "$$cyan==> Total Test Coverage: $$green$$total_passed / $$total_tests$$reset ("$$((100 * total_passed / total_tests))"%)"; \
+		rm -rf tmp; \
+	'
+
 
 # === Compiler Test ===
 test_compiler:
@@ -43,7 +51,8 @@ test_compiler:
 		base=$$(basename $$file .t); \
 		dir=$$(dirname $$file); \
 		echo -n "Running test: $$file ... "; \
-		java -cp $(SRC_DIR) main.Main < $$file > tmp/$$base.i; \
+		cd $(SRC_DIR) && java main.Main < ../$$file > ../tmp/$$base.i; \
+		cd ..; \
 		if diff $$dir/$$base.i tmp/$$base.i > /dev/null; then \
 			echo -e "$$green PASSED $$reset"; \
 			passed=$$((passed + 1)); \
@@ -63,6 +72,7 @@ test_compiler:
 	echo "compiler_passed=$$passed" >> tmp/test_results; \
 	echo "compiler_total=$$total" >> tmp/test_results; \
 	if [ $$failed -gt 0 ]; then exit 1; fi'
+
 
 # === Interpreter Test ===
 test_interpreter:
@@ -104,6 +114,7 @@ clean:
 	rm -f $(SRC_DIR)/parser/*.class
 	rm -f $(SRC_DIR)/main/*.class
 	rm -rf tmp
+	rm sources.txt
 
 # === YACC ===
 yacc:

@@ -1,3 +1,9 @@
+10
+.data:
+  i: int{-10..10}
+  x: float
+  b: bool
+.code:
 L1:	i = 0
 L3:	i = 365
 L4:	x = 0.0

@@ -8,3 +8,6 @@ temp/
 
 # Python
 __pycache__/
+
+# General
+*.txt

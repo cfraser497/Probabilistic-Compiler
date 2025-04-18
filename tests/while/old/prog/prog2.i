@@ -1,3 +1,10 @@
+10
+.data:
+  i: int{-10..10}
+  prod: float
+  a: [20] float
+  b: [20] float
+.code:
 L1:	prod = 0
 L3:	i = 1
 L4:	iffalse i < 20 goto L5

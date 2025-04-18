@@ -1,3 +1,14 @@
+10
+.data:
+  r: int{-10..10}
+  dd: int{-10..10}
+  a: int{-10..10}
+  d: int{-10..10}
+  i: int{-10..10}
+  prod: float
+  a: [20] float
+  b: [20] float
+.code:
 L1:	a = 50
 L3:	d = 5
 L4:	r = a

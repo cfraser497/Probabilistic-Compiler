@@ -1,4 +1,3 @@
-import sys
 import argparse
 
 from parser import Parser
@@ -27,8 +26,8 @@ def main():
 
     instructions = parser.parse()
 
-    # for instr in instructions:
-    #     print(instr.__class__.__name__, vars(instr))
+    for instr in instructions:
+        print(instr.__class__.__name__, vars(instr))
 
     env = Environment(instructions)
     execute(env, args.seed)

@@ -1,3 +1,11 @@
+10
+.data:
+  a: int{-10..10}
+  b: int{-10..10}
+  c: int{-10..10}
+  d: int{-10..10}
+  term: float
+.code:
 L1:	a = 1
 L3:	b = 2
 L4:	c = 3

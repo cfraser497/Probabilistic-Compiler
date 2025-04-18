@@ -1,3 +1,12 @@
+10
+.data:
+  temp: int{-10..10}
+  i: int{-10..10}
+  j: int{-10..10}
+  v: float
+  x: float
+  a: [100] float
+.code:
 L1:	i = 0
 L3:	j = 100
 L4:	v = 50.0
