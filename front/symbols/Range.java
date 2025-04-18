@@ -30,11 +30,11 @@ public class Range {
     @Override
     public String toString() {
         if (isSpread()) {
-            return baseType.toString() + "{" + low + ".." + high + "}";
+            return baseType.toString() + " { " + low + " .. " + high + " }";
         } else {
-            return baseType.toString() + "{" + values.stream()
+            return baseType.toString() + " { " + values.stream()
                 .map(Object::toString)
-                .collect(java.util.stream.Collectors.joining(", ")) + "}";
+                .collect(java.util.stream.Collectors.joining(" , ")) + " }";
         }
     }
 }
