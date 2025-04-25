@@ -1,6 +1,6 @@
 .data:
-  a: bool
-  b: bool
+  a : bool
+  b : bool
 .code:
 L1:	a = true
 L3:	b = false

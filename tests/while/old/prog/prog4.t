@@ -1,5 +1,6 @@
 {
 	int BLANK; int TAB; int NEWLINE; int peek; int line; int readch;
+	readch = 4;	
 
 	while( true ) {
 		if( peek == BLANK || peek == TAB ) ;

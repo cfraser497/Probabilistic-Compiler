@@ -1,5 +1,7 @@
 {
-	int a; int b; a = 0; b = 0;
+	int a;
+	int b;
+	a = 0; b = 0;
 	{
 		int b; b = 1;
 		{
@@ -9,8 +11,8 @@
 			int b; b = 3;
 		}
         if (a < b) {
-            a = a + 1;
-            b = b + 1;
+            a = a - 1;
+            b = b - 1;
             b = b + a;
         }
 
@@ -20,5 +22,5 @@
             a = a + b;
         }
 	}
-	a = a + 1; b = b + 1;
+	a = a - 1; b = b - 1;
 }

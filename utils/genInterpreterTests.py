@@ -13,7 +13,7 @@ def convert_i_files(directory):
                 try:
                     with open(output_path, 'w') as outfile:
                         subprocess.run(
-                            ['python3', '../interpreter/main.py', input_path],
+                            ['python3', '../interpreter/main.py', input_path, '--seed=42'],
                             stdout=outfile,
                             stderr=subprocess.PIPE,
                             check=True

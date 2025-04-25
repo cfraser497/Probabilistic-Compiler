@@ -1,7 +1,7 @@
 {
 	int r; int dd; int a; int d;
 
-	a = 50;
+	a = 5;
 	d = 5;
 	
 	r = a; dd = d;

@@ -1,7 +1,7 @@
 .data:
-  i: int{-10..10}
-  j: int{-10..10}
-  a: [10] [10] float
+  i : int { -10 .. 10 }
+  j : int { -10 .. 10 }
+  a : [10] [10] float
 .code:
 L1:	i = 0
 L3:L5:	j = 0

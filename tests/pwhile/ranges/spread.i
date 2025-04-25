@@ -1,6 +1,6 @@
 .data:
-  a: int{0..10}
-  b: int{0..5}
+  a : int { 0 .. 10 }
+  b : int { 0 .. 5 }
 .code:
 L1:	a = 0
 L3:	b = 0

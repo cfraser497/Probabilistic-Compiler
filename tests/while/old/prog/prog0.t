@@ -1,15 +1,15 @@
 {
-	int temp; int i; int j; float v; float x; float[100] a;
+	int temp; int i; int j; int v; int x; int[100] a;
 
 	i = 0;
-	j = 100;
-	v = 50.0;
+	j = 5;
+	v = 0;
 
-	temp = 1.0;
+	temp = 1;
 
 	while ( i < j ) {
 		a[i] = temp;
-		temp = temp + 1.0;
+		temp = temp + 1;
 		i = i + 1;
 	}
 

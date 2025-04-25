@@ -1,10 +1,10 @@
 .data:
-  r: int{-10..10}
-  dd: int{-10..10}
-  a: int{-10..10}
-  d: int{-10..10}
+  r : int { -10 .. 10 }
+  dd : int { -10 .. 10 }
+  a : int { -10 .. 10 }
+  d : int { -10 .. 10 }
 .code:
-L1:	a = 50
+L1:	a = 5
 L3:	d = 5
 L4:	r = a
 L5:	dd = d

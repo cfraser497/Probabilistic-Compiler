@@ -1,11 +1,11 @@
 {
-	int i; float prod; float [20] a; float [20] b;
+	int i; int prod; int [20] a; int [20] b;
 	prod = 0;
 	i = 1;
 
-	while ( i < 20 ) {
-		a[i] = 2.0;
-		b[i] = 3.0;
+	while ( i < 5 ) {
+		a[i] = 1;
+		b[i] = 2;
 		i = i + 1;
 	}
 
@@ -14,5 +14,5 @@
 	do {
 		prod = prod + a[i]*b[i];
 		i = i+1;
-	} while (i <= 20);
+	} while (i <= 2);
 }

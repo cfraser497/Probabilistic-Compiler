@@ -1,10 +1,10 @@
 .data:
-  b: bool
-  r: bool
-  a: [11] bool
-  i: int{-10..10}
-  x: int{-10..10}
-  y: int{-10..10}
+  b : bool
+  r : bool
+  a : [11] bool
+  i : int { -10 .. 10 }
+  x : int { -10 .. 10 }
+  y : int { -10 .. 10 }
 .code:
 L1:	b = true
 L3:	i = 0

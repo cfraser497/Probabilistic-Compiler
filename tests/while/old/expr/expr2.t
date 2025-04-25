@@ -13,6 +13,8 @@
 	a = b / c;
 	a = -b;
 
+	a = 1;
+
 	d = a - b - c;
 	d = a * b * c;
 	d = a + b * c;

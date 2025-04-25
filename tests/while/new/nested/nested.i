@@ -1,14 +1,13 @@
 .data:
-  r: int{-10..10}
-  dd: int{-10..10}
-  a: int{-10..10}
-  d: int{-10..10}
-  i: int{-10..10}
-  prod: float
-  a: [20] float
-  b: [20] float
+  r : int { -10 .. 10 }
+  dd : int { -10 .. 10 }
+  a : int { -10 .. 10 }
+  d : int { -10 .. 10 }
+  i : int { -10 .. 10 }
+  prod : int { -10 .. 10 }
+  b : [20] int { -10 .. 10 }
 .code:
-L1:	a = 50
+L1:	a = 5
 L3:	d = 5
 L4:	r = a
 L5:	dd = d
@@ -22,20 +21,20 @@ L12:	r = r - dd
 	goto L7
 L9:	prod = 0
 L13:	i = 1
-L14:	iffalse i < 20 goto L15
-L16:	t1 = i * 8
-	a [ t1 ] = 2.0
-L17:	t2 = i * 8
-	b [ t2 ] = 3.0
+L14:	iffalse i < 9 goto L15
+L16:	t1 = i * 4
+	a [ t1 ] = 2
+L17:	t2 = i * 4
+	b [ t2 ] = 1
 L18:	i = i + 1
 	goto L14
 L15:	i = 1
-L19:	t3 = i * 8
+L19:	t3 = i * 4
 	t4 = a [ t3 ]
-	t5 = i * 8
+	t5 = i * 4
 	t6 = b [ t5 ]
 	t7 = t4 * t6
 	prod = prod + t7
 L21:	i = i + 1
-L20:	if i <= 20 goto L19
+L20:	if i <= 2 goto L19
 L2:

@@ -1,5 +1,5 @@
 {
-	int i; int j; float[10][10] a;
+	int i; int j; int[10][10] a;
 	i = 0;
 	while ( i < 10 ) {
 		j = 0;
