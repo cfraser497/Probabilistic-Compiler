@@ -6,6 +6,7 @@ class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
         self.lookahead = self.lexer.scan()
+        self.variables = {}  # name → dict with 'type', 'range', 'values', etc.
 
     def match(self, tag):
         if self.lookahead.tag == tag:
@@ -15,22 +16,78 @@ class Parser:
             raise SyntaxError(f"Expected {tag}, found {self.lookahead.tag}")
 
     def parse(self):
+        self.match(Tag.DATA)
+        self.match(Tag.COLON)
+        self.parse_data()
+
+        self.match(Tag.CODE)
+        self.match(Tag.COLON)
+
         instructions = []
         labels = []
 
         while True:
-            # collect all labels for this line, if any
             while self.lookahead.tag == Tag.LABEL:
                 labels.append(self.lookahead.value)
                 self.match(Tag.LABEL)
 
             if self.lookahead.tag == Tag.EOF:
                 instructions.append(Empty(labels))
-                return instructions
+                return instructions, self.variables
 
             instruction = self.parse_instruction(labels)
             instructions.append(instruction)
             labels = []
+
+    def parse_data(self):
+        while self.lookahead.tag == Tag.ID:
+            var_info = {
+                "dims": [],
+                "range": None,
+                "type": None
+            }
+
+            varname = self.lookahead.value
+            self.match(Tag.ID)
+            self.match(Tag.COLON)
+
+            while self.lookahead.tag == Tag.LBRACKET:
+                self.match(Tag.LBRACKET)
+                dim_size = self.lookahead.value
+                self.match(Tag.NUM)
+                self.match(Tag.RBRACKET)
+                var_info["dims"].append(dim_size)
+
+
+            base_type = self.lookahead.tag
+            var_info["type"] = base_type
+            self.match(base_type)
+
+            if self.lookahead.tag == Tag.LBRACE:
+                self.match(Tag.LBRACE)
+                values = []
+
+                if self.lookahead.tag == Tag.NUM:
+                    first = self.lookahead.value
+                    self.match(Tag.NUM)
+
+                    if self.lookahead.tag == Tag.SPREAD:
+                        self.match(Tag.SPREAD)
+                        last = self.lookahead.value
+                        self.match(Tag.NUM)
+                        var_info["range"] = (first, last)
+                    else:
+                        values.append(first)
+                        while self.lookahead.tag == Tag.COMMA:
+                            self.match(Tag.COMMA)
+                            val = self.lookahead.value
+                            self.match(Tag.NUM)
+                            values.append(val)
+                        var_info["range"] = values
+
+                self.match(Tag.RBRACE)
+
+            self.variables[varname] = var_info
 
     def parse_instruction(self, labels):
         if self.lookahead.tag == Tag.ID:
@@ -85,6 +142,7 @@ class Parser:
             return value
         else:
             raise SyntaxError(f"Unexpected Tag, got {self.lookahead.tag}")
+
 
 
     def parse_assign(self, labels, target):

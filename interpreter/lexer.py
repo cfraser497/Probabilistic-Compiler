@@ -12,7 +12,13 @@ class Lexer:
             "goto": Token(Tag.GOTO),
             "true": Token(Tag.TRUE),
             "false": Token(Tag.FALSE),
-            "flip": Token(Tag.FLIP)
+            "flip": Token(Tag.FLIP),
+            ".code": Token(Tag.CODE),
+            ".data": Token(Tag.DATA),
+            "int": Token(Tag.INT),
+            "float": Token(Tag.FLOAT),
+            "bool": Token(Tag.BOOL),
+            "char": Token(Tag.CHAR),
         }
 
     def readch(self):
@@ -49,8 +55,15 @@ class Lexer:
             self.peek = ' '
             return tok
 
-        if self.peek.isdigit():
+        if self.peek == '-' or self.peek.isdigit():
             num_str = ''
+            if self.peek == '-':
+                num_str += '-'
+                self.readch()
+                if self.peek is None or not self.peek.isdigit():
+                    # standalone minus (e.g., as operator)
+                    return Token(Tag.MINUS)
+
             while self.peek is not None and self.peek.isdigit():
                 num_str += self.peek
                 self.readch()
@@ -58,15 +71,33 @@ class Lexer:
             if self.peek != '.':
                 return Token(Tag.NUM, int(num_str))
 
-            # we have a real number
+            # We have a float
             num_str += self.peek
             self.readch()
             while self.peek is not None and self.peek.isdigit():
                 num_str += self.peek
                 self.readch()
             return Token(Tag.REAL, float(num_str))
-            
 
+            
+        if self.peek == '.':
+            self.readch()
+            if self.peek == '.':
+                self.readch()
+                return Token(Tag.SPREAD)
+            else:
+                # Possibly start of a keyword ".data" or ".code"
+                lexeme = '.'
+                while self.peek is not None and self.peek.isalnum():
+                    lexeme += self.peek
+                    self.readch()
+
+                if lexeme in self.words:
+                    return self.words[lexeme]
+
+                return Token(Tag.ID, lexeme)
+
+        # Handle identifiers and labels
         if self.peek.isalpha():
             lexeme = ''
             while self.peek is not None and self.peek.isalnum():
@@ -83,6 +114,8 @@ class Lexer:
 
             return Token(Tag.ID, lexeme)
 
+        
+
         # Single-character tokens
         tok = None
         if self.peek == '=': tok = Token(Tag.ASSIGN)
@@ -92,6 +125,10 @@ class Lexer:
         elif self.peek == '/': tok = Token(Tag.DIV)
         elif self.peek == '[': tok = Token(Tag.LBRACKET)
         elif self.peek == ']': tok = Token(Tag.RBRACKET)
+        elif self.peek == ':': tok = Token(Tag.COLON)
+        elif self.peek == '{': tok = Token(Tag.LBRACE)
+        elif self.peek == '}': tok = Token(Tag.RBRACE)
+        elif self.peek == ',': tok = Token(Tag.COMMA)
         elif self.peek == ':': tok = Token(Tag.COLON)
 
         self.peek = ' '

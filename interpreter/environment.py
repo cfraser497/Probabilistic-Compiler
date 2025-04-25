@@ -1,9 +1,10 @@
 from tokens.tokens import Tag
 
 class Environment:
-    def __init__(self, instructions):
+    def __init__(self, instructions, variables):
         self.memory = {}
         self.arrays = {}
+        self.variables = variables
         self.labels = self.map_labels(instructions)
         self.instructions = instructions
         self.pc = 0

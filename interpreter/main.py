@@ -2,7 +2,7 @@ import argparse
 
 from parser import Parser
 from environment import Environment
-from interpreter import execute
+from executor import Executor
 from lexer import Lexer
 
 def main():
@@ -21,16 +21,22 @@ def main():
     # while token.tag != 'EOF':
     #     print(token)
     #     token = lexer.scan() 
-
+    # lexer = Lexer(code)
+    
     parser = Parser(lexer)
 
-    instructions = parser.parse()
+    instructions, variables = parser.parse()
 
-    for instr in instructions:
-        print(instr.__class__.__name__, vars(instr))
+    # for name, info in variables.items():
+    #     print(f"{name}: {info}")
+    
+    # for instr in instructions:
+    #     print(instr.__class__.__name__, vars(instr))
 
-    env = Environment(instructions)
-    execute(env, args.seed)
+    env = Environment(instructions, variables)
+    
+    executor = Executor(env, seed=args.seed)
+    executor.run()
 
     print("Final memory state:")
 
