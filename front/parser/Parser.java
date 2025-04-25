@@ -1,8 +1,10 @@
 package parser;
 import java.io.*; import lexer.*; import symbols.*; import inter.*; 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class Parser {
 
@@ -13,7 +15,8 @@ public class Parser {
    
    int minInt;
    int maxInt;
-   List<Id> declaredVariables = new ArrayList<>();
+   Map<String, Id> declaredVariables = new LinkedHashMap<>();
+
 
    public Parser(Lexer l, Properties props) throws IOException { 
       this.minInt = Integer.parseInt(props.getProperty("minInt"));
@@ -60,7 +63,13 @@ public class Parser {
           }
   
           top.put(tok, id);
-          declaredVariables.add(id);
+  
+          // Only add to declaredVariables if first declaration
+          String varName = tok.toString();
+          if (!declaredVariables.containsKey(varName)) {
+              declaredVariables.put(varName, id);
+          }
+  
           used += typed.type.width;
       }
   }
@@ -329,14 +338,15 @@ public class Parser {
 
    void emitdata() {
       System.out.println(".data:");
-      for (Id id : declaredVariables) {
-          String typeStr;
+      for (Map.Entry<String, Id> entry : declaredVariables.entrySet()) {
+          Id id = entry.getValue();
+          String range;
           if (id.range != null) {
-              typeStr = id.range.toString(); // e.g., int{0..5}
+              range = id.range.toString();  // e.g., int{0..5}
+              System.out.println("  " + id.toString() + " : " + id.type.toString() + range);
           } else {
-              typeStr = id.type.toString();
+            System.out.println("  " + id.toString() + " : " + id.type.toString());
           }
-          System.out.println("  " + id.toString() + ": " + typeStr);
       }
-   }
+  }
 }
