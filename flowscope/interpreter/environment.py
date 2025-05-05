@@ -1,4 +1,4 @@
-from tokens.tokens import Tag
+from tokens import Tag
 
 class Environment:
     def __init__(self, instructions, variables):

@@ -1,8 +1,8 @@
 import argparse
 
 from parser import Parser
-from environment import Environment
-from executor import Executor
+from interpreter import Environment
+from interpreter import Executor
 from lexer import Lexer
 
 def main():
@@ -27,16 +27,16 @@ def main():
 
     instructions, variables = parser.parse()
 
-    # for name, info in variables.items():
-    #     print(f"{name}: {info}")
-    
-    # for instr in instructions:
-    #     print(instr.__class__.__name__, vars(instr))
-
     env = Environment(instructions, variables)
     
     executor = Executor(env, seed=args.seed)
     executor.run()
+
+    for name, info in variables.items():
+        print(f"{name}: {info}")
+    
+    for instr in instructions:
+        print(instr.__class__.__name__, vars(instr))
 
     print("Final memory state:")
 

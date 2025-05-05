@@ -8,6 +8,8 @@ temp/
 
 # Python
 __pycache__/
+venv/
 
 # General
 *.txt
+!requirements.txt
