@@ -1,4 +1,5 @@
 SRC_DIR := front
+FLOWSCOPE_DIR := flowscope
 
 # === Common Shell Setup ===
 SHELL_SETUP := green="\033[0;32m"; red="\033[0;31m"; cyan="\033[0;36m"; reset="\033[0m";
@@ -115,6 +116,8 @@ clean:
 	rm -f $(SRC_DIR)/main/*.class
 	rm -rf tmp
 	rm sources.txt
+	rm *.png
+	rm -f $(FLOWSCOPE_DIR)/*.png
 
 # === YACC ===
 yacc:

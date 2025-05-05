@@ -13,3 +13,4 @@ venv/
 # General
 *.txt
 !requirements.txt
+*.png

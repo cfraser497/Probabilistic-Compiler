@@ -4,13 +4,13 @@ from parser import Parser
 from interpreter import Environment
 from interpreter import Executor
 from lexer import Lexer
-from pcfgbuilder import PCFGBuilder
 
 def main():
     argparser = argparse.ArgumentParser(description="Run interpreter on input file.")
     argparser.add_argument("filename", help="Path to the .i file to run.")
     argparser.add_argument("--seed", type=int, help="Optional random seed for reproducibility.")
     argparser.add_argument("--pcfg", action="store_true", help="Optional to generate a PCF")
+    argparser.add_argument("--no-execute", action="store_true", help="Prevent execution")
 
     args = argparser.parse_args() 
 
@@ -40,14 +40,17 @@ def main():
     # for instr in instructions:
         # print(instr)
 
-    print("Final memory state:")
-
-    for k, v in env.memory.items():
-        print(f"{k}: {v}")
+    if not args.no_execute:
+        print("Final memory state:")
+    
+        for k, v in env.memory.items():
+            print(f"{k}: {v}")
 
     if args.pcfg:
+        from pcfgbuilder import PCFGBuilder
+
         cfg = PCFGBuilder(instructions, env.labels)
-        cfg.build()
+        T = cfg.build()
         cfg.visualize("pcfg.png")
 
 if __name__ == "__main__":
