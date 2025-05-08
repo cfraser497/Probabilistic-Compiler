@@ -1,5 +1,5 @@
 # parser.py
-from tokens.tokens import Tag
+from tokens import Tag
 from instructions import *
 
 class Parser:

@@ -1,5 +1,5 @@
 from instructions import *
-from tokens.tokens import Tag
+from tokens import Tag
 import random
 
 

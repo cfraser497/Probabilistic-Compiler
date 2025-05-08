@@ -1,5 +1,5 @@
 # lexer.py
-from tokens.tokens import Token, Tag
+from tokens import Token, Tag
 
 class Lexer:
     def __init__(self, text):
