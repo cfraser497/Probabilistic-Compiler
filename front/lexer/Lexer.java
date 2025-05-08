@@ -15,8 +15,8 @@ public class Lexer {
       reserve( new Word("break", Tag.BREAK) );
 
       //pWhile
-      reserve( new Word("choose", Tag.CHOOSE));
-      reserve( Word.stop);
+      reserve( Word.choose );
+      reserve( Word.stop );
 
       reserve( Word.True );  reserve( Word.False );
 

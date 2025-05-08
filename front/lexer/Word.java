@@ -18,5 +18,6 @@ public class Word extends Token {
       temp   = new Word( "t",     Tag.TEMP  ),
 
       // pwhile
+      choose = new Word( "choose", Tag.CHOOSE ),
       stop   = new Word( "stop", Tag.STOP );
 }
