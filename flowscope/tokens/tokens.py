@@ -42,3 +42,4 @@ class Tag:
     FLOAT = 'float'
     CHAR = 'char'
     COMMA = ','
+    STOP = 'stop'

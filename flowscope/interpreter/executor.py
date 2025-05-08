@@ -59,6 +59,10 @@ class Executor:
             elif isinstance(instr, Empty):
                 pass
 
+            elif isinstance(instr, Stop):
+                # set the program counter out of range, terminating execution
+                self.env.pc = len(self.env.instructions)
+
             else:
                 raise SyntaxError("Unknown Instruction: " + instr.__class__.__name__)
 

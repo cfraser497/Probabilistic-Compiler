@@ -35,10 +35,10 @@ def main():
     executor.run()
 
     # for name, info in variables.items():
-        # print(f"{name}: {info}")
-    # 
+    #     print(f"{name}: {info}")
+    
     # for instr in instructions:
-        # print(instr)
+    #     print(instr)
 
     if not args.no_execute:
         print("Final memory state:")

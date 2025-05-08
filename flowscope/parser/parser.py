@@ -26,18 +26,19 @@ class Parser:
         instructions = []
         labels = []
 
-        while True:
+        while self.lookahead.tag != Tag.EOF:
+
             while self.lookahead.tag == Tag.LABEL:
                 labels.append(self.lookahead.value)
                 self.match(Tag.LABEL)
 
-            if self.lookahead.tag == Tag.EOF:
-                instructions.append(Empty(labels))
-                return instructions, self.variables
-
             instruction = self.parse_instruction(labels)
             instructions.append(instruction)
             labels = []
+
+        instructions.append(Empty(labels))
+        return instructions, self.variables
+    
 
     def parse_data(self):
         while self.lookahead.tag == Tag.ID:
@@ -98,6 +99,8 @@ class Parser:
             return self.parse_goto(labels)
         elif self.lookahead.tag == Tag.FLIP:
             return self.parse_flip(labels)
+        elif self.lookahead.tag == Tag.STOP:
+            return self.parse_stop(labels)
         else:
             raise SyntaxError(f"Unexpected token: {self.lookahead.tag}")
 
@@ -233,3 +236,8 @@ class Parser:
             self.match(Tag.ID)
 
         return Flip(labels, weights, target_labels)
+
+
+    def parse_stop(self, labels):
+        self.match(Tag.STOP)
+        return Stop(labels)

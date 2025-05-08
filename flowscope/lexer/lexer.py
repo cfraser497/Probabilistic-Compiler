@@ -19,6 +19,7 @@ class Lexer:
             "float": Token(Tag.FLOAT),
             "bool": Token(Tag.BOOL),
             "char": Token(Tag.CHAR),
+            "stop": Token(Tag.STOP),
         }
 
     def readch(self):
@@ -140,7 +141,7 @@ class Lexer:
     def tokens(self):
         tokens = []
         token = self.scan()
-        while token.tag != 'EOF':
+        while token.tag != Tag.EOF:
             tokens.append(token)
             token = self.scan()
 
