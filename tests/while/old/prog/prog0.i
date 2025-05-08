@@ -36,4 +36,4 @@ L19:	t7 = i * 4
 L20:	t10 = j * 4
 	a [ t10 ] = x
 	goto L11
-L2:
+L2:	stop

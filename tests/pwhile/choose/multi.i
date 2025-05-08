@@ -10,4 +10,4 @@ L5:	x = y
 L6:	y = x
 	goto L2
 L7:	y = y + 1
-L2:
+L2:	stop

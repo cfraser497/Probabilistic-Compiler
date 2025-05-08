@@ -14,4 +14,4 @@ L10:	b = b + 2
 L11:	a = a + b
 L5:	a = a + 1
 L12:	b = b + 1
-L2:
+L2:	stop

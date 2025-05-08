@@ -15,4 +15,4 @@ L6:	t1 = a - b
 	t5 = t4 * d
 	t6 = t1 - t5
 	d = t6 + 10
-L2:
+L2:	stop

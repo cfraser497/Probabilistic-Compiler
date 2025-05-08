@@ -47,4 +47,4 @@ L37:	if a < 100 goto L42
 	iffalse a > 200 goto L2
 	iffalse a != b goto L2
 L42:L41:	a = 0
-L2:
+L2:	stop

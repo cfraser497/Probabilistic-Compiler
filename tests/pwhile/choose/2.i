@@ -10,4 +10,4 @@ L6:	x = 0
 L7:	y = 1
 L5:	x = y
 L8:	y = x
-L2:
+L2:	stop

@@ -26,4 +26,4 @@ L16:	i = i + 1
 L17:	iffalse i >= 10 goto L14
 L18:	goto L2
 	goto L14
-L2:
+L2:	stop

@@ -9,4 +9,4 @@ L4:	x = 0.0
 L5:	x = 3.1415896
 L6:	b = true
 L7:	b = false
-L2:
+L2:	stop

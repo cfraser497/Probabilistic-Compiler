@@ -9,4 +9,4 @@ L4:	if b goto L5
 	goto L6
 L5:	t1 = false
 L6:	a = t1
-L2:
+L2:	stop

@@ -82,4 +82,4 @@ L50:	t12 = true
 	goto L49
 L48:	t12 = false
 L49:	r = t12
-L2:
+L2:	stop

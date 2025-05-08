@@ -12,4 +12,4 @@ L6:	t1 = a + b
 	t2 = c * d
 	t3 = t1 - t2
 	d = - t3
-L2:
+L2:	stop

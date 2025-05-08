@@ -23,4 +23,4 @@ L11:	t4 = i * 80
 	a [ t6 ] = 1.0
 L12:	i = i + 1
 	goto L10
-L2:
+L2:	stop

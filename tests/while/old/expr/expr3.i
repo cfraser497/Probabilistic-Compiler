@@ -23,4 +23,4 @@ L11:	iffalse x != y goto L15
 L14:	r = true
 	goto L2
 L15:	r = false
-L2:
+L2:	stop

@@ -18,4 +18,4 @@ L15:	a = a + b
 	goto L9
 L5:	a = a - 1
 L16:	b = b - 1
-L2:
+L2:	stop

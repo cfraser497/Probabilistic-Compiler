@@ -16,4 +16,4 @@ L9:	dd = dd / 2
 L10:	iffalse dd <= r goto L7
 L11:	r = r - dd
 	goto L7
-L2:
+L2:	stop

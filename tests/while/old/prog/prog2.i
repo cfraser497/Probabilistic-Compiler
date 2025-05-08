@@ -22,4 +22,4 @@ L9:	t3 = i * 4
 	prod = prod + t7
 L11:	i = i + 1
 L10:	if i <= 2 goto L9
-L2:
+L2:	stop

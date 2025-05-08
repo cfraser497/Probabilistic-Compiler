@@ -6,4 +6,4 @@ L1:	a = 0
 L3:	b = 0
 L4:	a = a + 1
 L5:	b = b + 5
-L2:
+L2:	stop

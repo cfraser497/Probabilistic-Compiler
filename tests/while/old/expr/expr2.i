@@ -36,4 +36,4 @@ L21:	t9 = b * b
 	t10 = 4.0 * a
 	t11 = t10 * c
 	term = t9 - t11
-L2:
+L2:	stop

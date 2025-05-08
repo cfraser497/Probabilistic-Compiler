@@ -27,4 +27,4 @@ L13:	t6 = i * 1
 	t7 = a [ t6 ]
 	iffalse t7 goto L2
 L15:	x = y
-L2:
+L2:	stop

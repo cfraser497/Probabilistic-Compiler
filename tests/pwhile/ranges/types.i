@@ -15,4 +15,4 @@ L6:	b = true
 L7:	b = false
 L8:	y = 5
 L9:	z = 2
-L2:
+L2:	stop

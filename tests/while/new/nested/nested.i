@@ -37,4 +37,4 @@ L19:	t3 = i * 4
 	prod = prod + t7
 L21:	i = i + 1
 L20:	if i <= 2 goto L19
-L2:
+L2:	stop

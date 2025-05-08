@@ -17,4 +17,4 @@ L10:	goto L2
 L5:	peek = readch
 L11:	goto L2
 	goto L3
-L2:
+L2:	stop
