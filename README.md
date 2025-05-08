@@ -20,6 +20,12 @@ java main.Main <FILE_PATH.t >OUTPUT_FILE.i
 python3 interpreter/main.py FILE_PATH.i
 ```
 
+### 🐍 Generate the PCFG graph with flag
+
+```bash
+--pcfg
+```
+
 #### Optional: Set a Seed for Reproducible Execution
 ```bash
 python3 interpreter/main.py FILE_PATH.i --seed=SEED

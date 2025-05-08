@@ -3,6 +3,7 @@ import numpy as np
 import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch
 from instructions import *
 
 class PCFGBuilder:
@@ -32,6 +33,9 @@ class PCFGBuilder:
                 total = sum(instr.weights)
                 for weight, tgt in zip(instr.weights, instr.target_labels):
                     self._add_edge(src_label, tgt, weight / total)
+
+            elif isinstance(instr, Stop):
+                self._add_edge(src_label, src_label, 1.0, is_stop=True)
     
             else:
                 next_label = self._next_label(i)
@@ -79,52 +83,65 @@ class PCFGBuilder:
 
     
 
+
     def visualize(self, filename='pcfg.png'):
         G = nx.DiGraph()
 
-        # Add nodes
+        # Build graph with non-self-loop edges only
         for label in self.label_map:
             G.add_node(label)
 
-        # Add edges with weights
+        edge_labels = {}  # For regular edges only (not self-loops)
+
+        # Draw regular edges (skip self-loops for now)
         for src_label, targets in self.graph.items():
             for tgt_label, prob in targets.items():
-                G.add_edge(src_label, tgt_label, weight=prob, label=f"{prob:.2f}")
+                if src_label != tgt_label:
+                    G.add_edge(src_label, tgt_label, weight=prob)
+                    edge_labels[(src_label, tgt_label)] = f"{prob:.2f}"
 
-        # Use dot with LR direction and increased spacing
+        # Compute layout
         pos = graphviz_layout(
-            G,
-            prog='dot',
+            G, prog='dot',
             args='-Grankdir=LR -Gnodesep=1.0 -Granksep=0.75 -Gpackmode=clust -Gpack=true'
         )
 
-        edge_labels = nx.get_edge_attributes(G, 'label')
-
         NODE_SIZE = 1200
-        plt.figure(figsize=(14, 6))  # Wider aspect ratio to help node spread
+        fig, ax = plt.subplots(figsize=(14, 6))
 
-        # Nodes
-        nx.draw_networkx_nodes(G, pos, node_size=NODE_SIZE, node_color='lightgray')
-
-        # Edges with curved connectionstyle to avoid overlap
+        # Draw base graph
+        nx.draw_networkx_nodes(G, pos, node_size=NODE_SIZE, node_color='lightgray', ax=ax)
         nx.draw_networkx_edges(
-            G, pos,
+            G, pos, ax=ax,
             arrowstyle='-|>',
             arrowsize=25,
             edge_color='black',
             connectionstyle='arc3,rad=0.25',
             node_size=NODE_SIZE
         )
+        nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold', ax=ax)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', font_size=9, rotate=False, ax=ax)
 
-        # Labels
-        nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', font_size=9, rotate=False)
+        # Draw self-loops separately
+        for src_label, targets in self.graph.items():
+            for tgt_label, prob in targets.items():
+                if src_label == tgt_label:
+                    x, y = pos[src_label]
 
-        plt.title("Probabilistic Control Flow Graph")
-        plt.axis('off')
+                    loop = FancyArrowPatch(
+                        (x + 6, y - 1), (x + 5, y + 1),  # start and end horizontally spaced
+                        connectionstyle="arc3,rad=1.5",
+                        arrowstyle='-|>',
+                        mutation_scale=20,
+                        lw=1.5,
+                        color='black',
+                    )
+                    ax.add_patch(loop)
+                    ax.text(x + 20, y, f"{prob:.2f}", fontsize=9, color='red', ha='center')
+
+        ax.set_title("Probabilistic Control Flow Graph")
+        ax.axis('off')
         plt.tight_layout()
         plt.savefig(filename)
         plt.close()
-
         print(f"✅ PCFG saved to {filename}")
-    
