@@ -38,7 +38,7 @@ public class Parser {
       Stmt s = block(); emitdata();
       int begin = s.newlabel();  int after = s.newlabel();
       System.out.println(".code:");
-      s.emitlabel(begin);  s.gen(begin, after);  s.emitlabel(after);
+      s.emitlabel(begin);  s.gen(begin, after);  s.emitstoplabel(after);
    }
 
    Stmt block() throws IOException {  // block -> { decls stmts }
@@ -202,6 +202,11 @@ public class Parser {
          }
          match('}');
          return new Choose(branches, totalWeight);
+
+      // stop stmt
+      case Tag.STOP:
+         match(Tag.STOP); match(';');
+         return new Stop();
 
       case '{':
          return block();

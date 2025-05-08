@@ -16,6 +16,7 @@ public class Lexer {
 
       //pWhile
       reserve( new Word("choose", Tag.CHOOSE));
+      reserve( Word.stop);
 
       reserve( Word.True );  reserve( Word.False );
 

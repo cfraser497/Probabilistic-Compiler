@@ -9,7 +9,7 @@ Decl    ->  Type id ;
 Type    ->  Type [ num ] | int | float | char | bool
 Stmts   ->  e | Stmts Stmt | Stmt
 Stmt    ->  loc = expr ; | if ( bool ) Stmt | if ( bool ) Stmt else Stmt | while ( bool ) Stmt
-   |   do Stmt while ( bool ) ; | break ; | { Decls Stmts } | choose { Branchs }
+   |   do Stmt while ( bool ) ; | break ; | { Decls Stmts } | choose { Branchs } | stop
 Branchs ->  e | Branchs num : Stmt
 bool    ->  bool or bool | bool and bool | ! bool | ( bool ) | expr rel expr | true | false
 expr    ->  expr + expr | expr - expr | expr * expr | expr / expr | loc | ( bool ) | num
