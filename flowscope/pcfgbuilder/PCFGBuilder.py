@@ -81,7 +81,50 @@ class PCFGBuilder:
     def _next_label(self, index):
         return self.instruction_regions.get(index + 1)
 
-    
+    def draw_self_loop(self, ax, pos, label, loop_radius=17):
+        """
+        Draw a visually consistent self-loop above a node.
+
+        Args:
+            ax: The matplotlib Axes object.
+            pos: Tuple of (x, y) node position in data coordinates.
+            label: Text label (e.g., probability).
+            loop_radius: Visual size in screen (pixel) space.
+        """
+        xdata, ydata = pos
+        trans = ax.transData
+
+        # Convert node center to display coordinates
+        xdisp, ydisp = trans.transform((xdata, ydata))
+
+        # Offset horizontally in display space
+        dx = 10
+        dy = loop_radius
+
+        # Define arrow start/end in display space
+        start_disp = (xdisp + dx, ydisp - loop_radius)
+        end_disp   = (xdisp + dx, ydisp + loop_radius)
+
+        # Convert back to data coordinates
+        start_data = trans.inverted().transform(start_disp)
+        end_data   = trans.inverted().transform(end_disp)
+
+        # Draw loop arrow in data coordinates
+        arrow = FancyArrowPatch(
+            start_data, end_data,
+            connectionstyle="arc3,rad=2",
+            arrowstyle='-|>',
+            mutation_scale=20,
+            lw=1.5,
+            color='black',
+            zorder=2
+        )
+        ax.add_patch(arrow)
+
+        # Add label slightly above arc (in display space)
+        label_disp = (xdisp + loop_radius + 40, ydisp)
+        label_data = trans.inverted().transform(label_disp)
+        ax.text(*label_data, f"{label:.2f}", fontsize=9, color='red', ha='center', zorder=3)
 
 
     def visualize(self, filename='pcfg.png'):
@@ -116,7 +159,7 @@ class PCFGBuilder:
             arrowstyle='-|>',
             arrowsize=25,
             edge_color='black',
-            connectionstyle='arc3,rad=0.25',
+            connectionstyle='arc3,rad=0.15',
             node_size=NODE_SIZE
         )
         nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold', ax=ax)
@@ -126,18 +169,19 @@ class PCFGBuilder:
         for src_label, targets in self.graph.items():
             for tgt_label, prob in targets.items():
                 if src_label == tgt_label:
-                    x, y = pos[src_label]
+                    self.draw_self_loop(ax, pos[src_label], prob)
+                    # x, y = pos[src_label]
 
-                    loop = FancyArrowPatch(
-                        (x + 6, y - 1), (x + 5, y + 1),  # start and end horizontally spaced
-                        connectionstyle="arc3,rad=1.5",
-                        arrowstyle='-|>',
-                        mutation_scale=20,
-                        lw=1.5,
-                        color='black',
-                    )
-                    ax.add_patch(loop)
-                    ax.text(x + 20, y, f"{prob:.2f}", fontsize=9, color='red', ha='center')
+                    # loop = FancyArrowPatch(
+                    #     (x + 6, y - 4), (x + 6, y + 4 ),  # start and end horizontally spaced
+                    #     connectionstyle="arc3,rad=1.5",
+                    #     arrowstyle='-|>',
+                    #     mutation_scale=20,
+                    #     lw=1.5,
+                    #     color='black',
+                    # )
+                    # ax.add_patch(loop)
+                    # ax.text(x + 28, y, f"{prob:.2f}", fontsize=9, color='red', ha='center')
 
         ax.set_title("Probabilistic Control Flow Graph")
         ax.axis('off')
