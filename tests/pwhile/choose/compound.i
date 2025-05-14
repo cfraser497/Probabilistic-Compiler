@@ -8,13 +8,9 @@ L3:	y = 1
 L4:	flip 1 goto L5 2 goto L6
 L5:	x = 0
 L7:	y = x
-L8:	t1 = 1 * x
-	t2 = t1 + 1
-	z = t2 - 0
+L8:	z = 1 * x + 1 - 0
 	goto L2
 L6:	y = 1
 L9:	x = y
-L10:	t3 = 2 * x
-	t4 = t3 + 4
-	z = t4 - 4
+L10:	z = 5 + 2 * x + 4 - 4
 L2:	stop

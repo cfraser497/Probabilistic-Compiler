@@ -22,19 +22,12 @@ L12:	r = r - dd
 L9:	prod = 0
 L13:	i = 1
 L14:	iffalse i < 9 goto L15
-L16:	t1 = i * 4
-	a [ t1 ] = 2
-L17:	t2 = i * 4
-	b [ t2 ] = 1
+L16:	a [ i * 4 ] = 2
+L17:	b [ i * 4 ] = 1
 L18:	i = i + 1
 	goto L14
 L15:	i = 1
-L19:	t3 = i * 4
-	t4 = a [ t3 ]
-	t5 = i * 4
-	t6 = b [ t5 ]
-	t7 = t4 * t6
-	prod = prod + t7
+L19:	prod = prod + a [ i * 4 ] * b [ i * 4 ]
 L21:	i = i + 1
 L20:	if i <= 2 goto L19
 L2:	stop
