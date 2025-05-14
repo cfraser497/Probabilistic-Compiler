@@ -12,8 +12,8 @@ public class Rel extends Logical {
    }
 
    public void jumping(int t, int f) {
-      Expr a = expr1.reduce();
-      Expr b = expr2.reduce();
+      Expr a = left.reduce();
+      Expr b = right.reduce();
       String test = a.toString() + " " + op.toString() + " " + b.toString();
       emitjumps(test, t, f);
    }

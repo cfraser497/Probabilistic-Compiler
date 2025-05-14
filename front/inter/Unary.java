@@ -1,17 +1,15 @@
 package inter;
 import lexer.*; import symbols.*;
 
-public class Unary extends Op {
-
-   public Expr expr;
+public class Unary extends Expr {
 
    public Unary(Token tok, Expr x) {    // handles minus, for ! see Not
-      super(tok, null);  expr = x;
-      type = Type.max(Type.Int, expr.type);
+      super(tok, null, x, null);
+      type = Type.max(Type.Int, x.type);
       if (type == null ) error("type error");
    }
 
-   public Expr gen() { return new Unary(op, expr.reduce()); }
+   public Expr gen() { return new Unary(op, left.reduce()); }
 
-   public String toString() { return op.toString()+" "+expr.toString(); }
+   public String toString() { return op.toString()+" "+left.toString(); }
 }

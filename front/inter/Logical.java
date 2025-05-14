@@ -3,12 +3,9 @@ import lexer.*; import symbols.*;
 
 public class Logical extends Expr {
 
-   public Expr expr1, expr2;
-
    Logical(Token tok, Expr x1, Expr x2) {
-      super(tok, null);                      // null type to start
-      expr1 = x1; expr2 = x2;
-      type = check(expr1.type, expr2.type);
+      super(tok, null, x1, x2);                      // null type to start
+      type = check(x1.type, x2.type);
       if (type == null ) error("type error");
    }
 
@@ -28,7 +25,7 @@ public class Logical extends Expr {
       return temp;
    }
 
-   public String toString() {
-      return expr1.toString()+" "+op.toString()+" "+expr2.toString();
-   }
+   // public String toString() {
+   //    return x1.toString()+" "+op.toString()+" "+expr2.toString();
+   // }
 }
