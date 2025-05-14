@@ -1,5 +1,5 @@
 package inter;
-import lexer.*; import symbols.*;
+import lexer.*;
 
 public class And extends Logical {
 

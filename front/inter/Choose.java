@@ -1,6 +1,5 @@
 package inter;
 
-import inter.*;
 import java.util.List;
 
 public class Choose extends Stmt {

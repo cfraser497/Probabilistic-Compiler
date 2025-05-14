@@ -3,7 +3,7 @@ import java.io.*; import java.util.*; import symbols.*;
 public class Lexer {
    public static int line = 1;
    char peek = ' ';
-   Hashtable words = new Hashtable();
+   Hashtable<String, Word> words = new Hashtable<String, Word>();
    void reserve(Word w) { words.put(w.lexeme, w); }
 
    public Lexer() {
