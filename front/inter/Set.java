@@ -21,7 +21,6 @@ public class Set extends Stmt {
    }
 
    public void gen(int b, int a) {
-      // System.out.println("\n NEW STRING: " + expr.gen().toString() + "\nEND");
-      emit(id.toString() + " = " + expr.gen().toString());
+      emit(id.toString() + " = " + expr);
    }
 }

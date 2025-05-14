@@ -9,7 +9,5 @@ public class Unary extends Expr {
       if (type == null ) error("type error");
    }
 
-   public Expr gen() { return new Unary(op, left.reduce()); }
-
    public String toString() { return op.toString()+" "+left.toString(); }
 }

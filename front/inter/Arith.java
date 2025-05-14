@@ -9,10 +9,6 @@ public class Arith extends Expr {
       if (type == null ) error("type error");
    }
 
-   public Expr gen() {
-      return new Arith(op, left.reduce(), right.reduce());
-   }
-
    public String toString() {
       return left.toString()+" "+op.toString()+" "+right.toString();
    }
