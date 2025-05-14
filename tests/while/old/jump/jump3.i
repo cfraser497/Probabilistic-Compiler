@@ -18,7 +18,6 @@ L10:	a [ i * 1 ] = true
 L11:	a [ i * 1 ] = false
 L12:	iffalse b goto L13
 L14:	x = y
-L13:	t1 = a [ i * 1 ]
-	iffalse t1 goto L2
+L13:	iffalse a [ i * 1 ] goto L2
 L15:	x = y
 L2:	stop

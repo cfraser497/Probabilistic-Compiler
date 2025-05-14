@@ -5,22 +5,14 @@
 .code:
 L1:	x = 1
 L3:	y = 2
-L4:	if x < y goto L6
-	t1 = true
+L4:	r = ! (x < y)
+L5:	r = ! ! (x == y)
+L6:	if x > y goto L9
+L8:	r = true
 	goto L7
-L6:	t1 = false
-L7:	r = t1
-L5:	iffalse x == y goto L9
-	t2 = true
-	goto L10
-L9:	t2 = false
-L10:	r = t2
-L8:	if x > y goto L13
-L12:	r = true
-	goto L11
-L13:	r = false
-L11:	iffalse x != y goto L15
-L14:	r = true
+L9:	r = false
+L7:	iffalse x != y goto L11
+L10:	r = true
 	goto L2
-L15:	r = false
+L11:	r = false
 L2:	stop

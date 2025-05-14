@@ -17,16 +17,13 @@ L10:	i = i + 1
 	goto L6
 L7:	i = - 1
 L11:L12:	i = i + 1
-L14:	t1 = a [ i * 4 ]
-	if t1 < v goto L12
+L14:	if a [ i * 4 ] < v goto L12
 L13:	j = j - 1
-L16:	t2 = a [ j * 4 ]
-	if t2 > v goto L13
+L16:	if a [ j * 4 ] > v goto L13
 L15:	iffalse i >= j goto L17
 L18:	goto L2
 L17:	x = a [ i * 4 ]
-L19:	t3 = a [ j * 4 ]
-	a [ i * 4 ] = t3
+L19:	a [ i * 4 ] = a [ j * 4 ]
 L20:	a [ j * 4 ] = x
 	goto L11
 L2:	stop
