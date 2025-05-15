@@ -22,7 +22,7 @@ L15:	d = a + b * c
 L16:	d = a * b + c
 L17:	d = a - b - c
 L18:	d = a - b - c
-L19:	d = a + b * c
-L20:	d = a * b + c
+L19:	d = (a + b) * c
+L20:	d = a * (b + c)
 L21:	term = b * b - 4.0 * a * c
 L2:	stop
