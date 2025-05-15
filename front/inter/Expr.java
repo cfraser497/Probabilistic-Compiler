@@ -19,7 +19,7 @@ public class Expr extends Node {
       this.left = left;
       this.right = right;
    }
-
+   
    public Expr reduce() {
       return this;
    }
