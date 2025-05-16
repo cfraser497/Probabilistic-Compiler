@@ -20,6 +20,13 @@ run: compiler
 	fi; \
 	cd $(SRC_DIR) && java main.Main < ../$(file)
 
+interpret:
+	@if [ -z "$(file)" ]; then \
+		echo "Usage: make interpret file=<your_input_file>"; \
+		exit 1; \
+	fi; \
+	cd $(FLOWSCOPE_DIR) && python3 main.py ../$(file)
+
 
 
 # === Test Entrypoint ===
