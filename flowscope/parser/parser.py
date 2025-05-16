@@ -1,6 +1,7 @@
 # parser.py
 from tokens import Tag
 from instructions import *
+from .expressions import *
 
 class Parser:
     def __init__(self, lexer):
@@ -130,8 +131,9 @@ class Parser:
             op = self.lookahead.tag
             self.match(op)
             right = self.parse_and()
-            expr = ('binop', op, expr, right)
+            expr = BinaryOp(op, expr, right)
         return expr
+
 
     def parse_and(self):
         expr = self.parse_rel()
@@ -139,7 +141,7 @@ class Parser:
             op = self.lookahead.tag
             self.match(op)
             right = self.parse_rel()
-            expr = ('binop', op, expr, right)
+            expr = BinaryOp(op, expr, right)
         return expr
     
     def parse_rel(self):
@@ -148,7 +150,7 @@ class Parser:
             op = self.lookahead.tag
             self.match(op)
             right = self.parse_arith_expr()
-            expr = ('binop', op, expr, right)
+            expr = BinaryOp(op, expr, right)
         return expr
 
     def parse_arith_expr(self):
@@ -157,7 +159,7 @@ class Parser:
             op = self.lookahead.tag
             self.match(op)
             right = self.parse_term()
-            expr = ('binop', op, expr, right)
+            expr = BinaryOp(op, expr, right)
         return expr
 
     def parse_term(self):
@@ -166,18 +168,16 @@ class Parser:
             op = self.lookahead.tag
             self.match(op)
             right = self.parse_unary()
-            expr = ('binop', op, expr, right)
+            expr = BinaryOp(op, expr, right)
         return expr
 
     def parse_unary(self):
         if self.lookahead.tag == Tag.MINUS:
             self.match(Tag.MINUS)
-            expr = self.parse_unary()
-            return ('neg', expr)
+            return UnaryOp(Tag.MINUS, self.parse_unary())
         elif self.lookahead.tag == Tag.NOT:
             self.match(Tag.NOT)
-            expr = self.parse_unary()
-            return ('not', expr)
+            return UnaryOp(Tag.NOT, self.parse_unary())
         return self.parse_factor()
 
 
@@ -190,17 +190,17 @@ class Parser:
         elif self.lookahead.tag == Tag.NUM:
             value = self.lookahead.value
             self.match(Tag.NUM)
-            return ('num', value)
+            return Number(value)
         elif self.lookahead.tag == Tag.REAL:
             value = self.lookahead.value
             self.match(Tag.REAL)
-            return ('real', value)
+            return Real(value)
         elif self.lookahead.tag == Tag.TRUE:
             self.match(Tag.TRUE)
-            return ('bool', True)
+            return Boolean(True)
         elif self.lookahead.tag == Tag.FALSE:
             self.match(Tag.FALSE)
-            return ('bool', False)
+            return Boolean(False)
         elif self.lookahead.tag == Tag.ID:
             name = self.lookahead.value
             self.match(Tag.ID)
@@ -208,11 +208,10 @@ class Parser:
                 self.match(Tag.LBRACKET)
                 index_expr = self.parse_expr()
                 self.match(Tag.RBRACKET)
-                return ('array', name, index_expr)
-            return ('var', name)
+                return ArrayAccess(name, index_expr)
+            return Variable(name)
         else:
             raise SyntaxError(f"Unexpected token in expression: {self.lookahead.tag}")
-
 
 
     def parse_arr_assign(self, labels, array_name):

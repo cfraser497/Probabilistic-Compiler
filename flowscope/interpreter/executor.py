@@ -2,7 +2,6 @@ from instructions import *
 from tokens import Tag
 import random
 
-
 class Executor:
     def __init__(self, env, seed=None):
         self.env = env
@@ -14,17 +13,41 @@ class Executor:
             instr = self.env.instructions[self.env.pc]
 
             if isinstance(instr, Assign):
-                result = self.eval_expr(instr.source)
-                self.validate(instr.target, result)
-                self.env.set_value(instr.target, result)
+                value = instr.source.eval(self.env)
+                self.validate(instr.target, value)
+                self.env.set_value(instr.target, value)
+
+            elif isinstance(instr, ArrayAssign):
+                index = instr.index.eval(self.env)
+                value = instr.value.eval(self.env)
+                self.validate(instr.array_name, value)
+                if index < 0:
+                    raise RuntimeError(f"Invalid array index: {index}")
+                self.env.arrays.setdefault(instr.array_name, {})[index] = value
+
+            elif isinstance(instr, ArrayRead):
+                index = instr.index.eval(self.env)
+                value = self.env.arrays.get(instr.array_name, {}).get(index, 0)
+                self.validate(instr.target, value)
+                self.env.set_value(instr.target, value)
 
             elif isinstance(instr, IfGoto):
-                if self.eval_expr(instr.expr) == Tag.TRUE:
+                if instr.expr.eval(self.env) == Tag.TRUE:
                     self.env.pc = self.env.labels[instr.target_label]
                     continue
 
             elif isinstance(instr, IfFalseGoto):
-                if self.eval_expr(instr.expr) != Tag.TRUE:
+                if instr.expr.eval(self.env) != Tag.TRUE:
+                    self.env.pc = self.env.labels[instr.target_label]
+                    continue
+
+            elif isinstance(instr, IfGoto):
+                if self.evaluate_condition(instr):
+                    self.env.pc = self.env.labels[instr.target_label]
+                    continue
+
+            elif isinstance(instr, IfFalseGoto):
+                if not self.evaluate_condition(instr):
                     self.env.pc = self.env.labels[instr.target_label]
                     continue
 
@@ -32,40 +55,25 @@ class Executor:
                 self.env.pc = self.env.labels[instr.target_label]
                 continue
 
-            elif isinstance(instr, ArrayAssign):
-                idx = self.eval_expr(instr.index)
-                val = self.eval_expr(instr.value)
-                self.validate(instr.array_name, val)
-                if idx < 0:
-                    raise RuntimeError(f"Invalid array index: {idx}")
-                self.env.arrays.setdefault(instr.array_name, {})[idx] = val
-
-            elif isinstance(instr, ArrayRead):
-                idx = self.eval_expr(instr.index)
-                val = self.env.arrays.get(instr.array_name, {}).get(idx, 0)
-                self.validate(instr.target, val)
-                self.env.set_value(instr.target, val)
-
             elif isinstance(instr, Flip):
-                target_label = random.choices(instr.target_labels, weights=instr.weights, k=1)[0]
-                self.env.pc = self.env.labels[target_label]
+                chosen = random.choices(instr.target_labels, weights=instr.weights, k=1)[0]
+                self.env.pc = self.env.labels[chosen]
                 continue
+
+            elif isinstance(instr, Stop):
+                self.env.pc = len(self.env.instructions)
 
             elif isinstance(instr, Empty):
                 pass
 
-            elif isinstance(instr, Stop):
-                # set the program counter out of range, terminating execution
-                self.env.pc = len(self.env.instructions)
-
             else:
-                raise SyntaxError("Unknown Instruction: " + instr.__class__.__name__)
+                raise RuntimeError(f"Unknown instruction type: {instr}")
 
             self.env.pc += 1
 
     def validate(self, name, value):
         if name not in self.env.variables:
-            return  # unknown variable
+            return  # unknown variable, ignore for now
 
         meta = self.env.variables[name]
         expected_type = meta["type"]
@@ -88,26 +96,6 @@ class Executor:
                 if value not in allowed_range:
                     raise RuntimeError(f"Value error: {name} value {value} not in {allowed_range}")
 
-    def eval_binary(self, op, a, b):
-        ops = {
-            Tag.PLUS: lambda x, y: x + y,
-            Tag.MINUS: lambda x, y: x - y,
-            Tag.MUL: lambda x, y: x * y,
-            Tag.DIV: lambda x, y: x // y,
-            Tag.LT: lambda x, y: Tag.TRUE if x < y else Tag.FALSE,
-            Tag.GT: lambda x, y: Tag.TRUE if x > y else Tag.FALSE,
-            Tag.LE: lambda x, y: Tag.TRUE if x <= y else Tag.FALSE,
-            Tag.GE: lambda x, y: Tag.TRUE if x >= y else Tag.FALSE,
-            Tag.EQ: lambda x, y: Tag.TRUE if x == y else Tag.FALSE,
-            Tag.NEQ: lambda x, y: Tag.TRUE if x != y else Tag.FALSE,
-            Tag.OR: lambda x, y: Tag.TRUE if x == Tag.TRUE or y == Tag.TRUE else Tag.FALSE,
-            Tag.AND: lambda x, y: Tag.TRUE if x == Tag.TRUE and y == Tag.TRUE else Tag.FALSE,
-        }
-
-        if op not in ops:
-            raise RuntimeError(f"Unsupported binary operator: {op}")
-        return ops[op](a, b)
-
     def evaluate_condition(self, instr):
         if instr.op is None:
             return self.env.get_value(instr.left) == Tag.TRUE
@@ -121,35 +109,3 @@ class Executor:
             '==': lambda x, y: x == y,
             '!=': lambda x, y: x != y
         }[instr.op](a, b)
-    
-    def eval_expr(self, expr):
-        if isinstance(expr, int) or isinstance(expr, float):
-            return expr
-        if isinstance(expr, str):  # variable
-            return self.env.get_value(expr)
-
-        kind = expr[0]
-
-        if kind == 'num' or kind == 'real':
-            return expr[1]
-        elif kind == 'bool':
-            return Tag.TRUE if expr[1] is True else Tag.FALSE
-        elif kind == 'var':
-            return self.env.get_value(expr[1])
-        elif kind == 'neg':
-            return -self.eval_expr(expr[1])
-        elif kind == 'not':
-            inner = self.eval_expr(expr[1])
-            return Tag.FALSE if inner == Tag.TRUE else Tag.TRUE
-        elif kind == 'array':
-            array_name = expr[1]
-            index = self.eval_expr(expr[2])
-            return self.env.arrays.get(array_name, {}).get(index, 0)
-        elif kind == 'binop':
-            op, left, right = expr[1], expr[2], expr[3]
-            a = self.eval_expr(left)
-            b = self.eval_expr(right)
-            return self.eval_binary(op, a, b)
-        else:
-            raise RuntimeError(f"Unknown expression node: {expr}")
-
