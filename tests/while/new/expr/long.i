@@ -9,5 +9,5 @@ L3:	b = 2
 L4:	c = 3
 L5:	d = 4
 L6:	d = a - b * c
-L7:	d = a - b - (c + d - 4 + 1) * d + 10
+L7:	d = a - b - (c + d - 4 + 1) * d + 20
 L2:	stop

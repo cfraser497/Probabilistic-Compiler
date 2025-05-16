@@ -1,6 +1,5 @@
 Final memory state:
 a: 1
-b: 2
+b: true
 c: 3
-d: 5
-term: -8.0
+d: 4
