@@ -5,6 +5,8 @@ from interpreter import Environment
 from interpreter import Executor
 from lexer import Lexer
 
+from pcfgbuilder import PCFGBuilder
+
 def main():
     argparser = argparse.ArgumentParser(description="Run interpreter on input file.")
     argparser.add_argument("filename", help="Path to the .i file to run.")
@@ -46,11 +48,9 @@ def main():
         for k, v in env.memory.items():
             print(f"{k}: {v}")
 
+    cfg = PCFGBuilder(instructions, env.labels)
+    T = cfg.build()
     if args.pcfg:
-        from pcfgbuilder import PCFGBuilder
-
-        cfg = PCFGBuilder(instructions, env.labels)
-        T = cfg.build()
         cfg.visualize("pcfg.png")
 
 if __name__ == "__main__":

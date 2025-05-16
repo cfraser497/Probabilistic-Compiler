@@ -68,3 +68,10 @@ Finds all .i test files in the tests/ directory, runs them with the Python inter
 make clean
 ```
 Removes all compiled .class files and temporary files in the tmp/ directory.
+
+
+### Whats next?
+- Implement LOS for program representation
+- Implement DTMC matrix construction from LOS
+- Apply arnoldi algorithm to LOS
+- Prune unreachable code using CFA.

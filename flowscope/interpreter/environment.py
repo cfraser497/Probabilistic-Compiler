@@ -18,16 +18,18 @@ class Environment:
         return labels
 
     def get_value(self, identifier):
-        if isinstance(identifier, int) or isinstance(identifier, float):
+        if isinstance(identifier, (int, float)):
             return identifier
-        if isinstance(identifier, str) and identifier.isdigit():
-            return int(identifier)
-        # handle negative values e.g. -x
-        if identifier[0] == "-":
-            return self.memory.get(identifier[1:])
-        if identifier == Tag.TRUE or identifier == Tag.FALSE:
-            return identifier
-        return self.memory.get(identifier)
+        if isinstance(identifier, str):
+            if identifier == Tag.TRUE or identifier == Tag.FALSE:
+                return identifier
+            if identifier.isdigit() or (identifier[0] == '-' and identifier[1:].isdigit()):
+                return int(identifier)
+            if identifier.startswith('-') and identifier[1:] in self.memory:
+                return -self.memory.get(identifier[1:], 0)
+            return self.memory.get(identifier, 0)
+        return identifier
+
 
     def set_value(self, identifier, value):
         self.memory[identifier] = value

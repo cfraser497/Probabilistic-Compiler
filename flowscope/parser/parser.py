@@ -116,103 +116,135 @@ class Parser:
             print(self.lookahead.tag)
             raise SyntaxError(f"Unexpected token after ID: {self.lookahead.tag}")
 
-    def parse_signed_op(self, allow_real=True, allow_bool=True):
-        tag, value = self.lookahead.tag, self.lookahead.value
-        if allow_bool and tag == Tag.TRUE or tag == Tag.FALSE:
-            self.match(tag)
-            return tag
-
-        sign = 1
-        if self.lookahead.tag == Tag.MINUS:
-            self.match(Tag.MINUS)
-            sign = -1
-        
-        if self.lookahead.tag == Tag.NUM:
-            value = self.lookahead.value
-            self.match(Tag.NUM)
-            return sign * value
-        
-        elif allow_real and self.lookahead.tag == Tag.REAL:
-            value = self.lookahead.value
-            self.match(Tag.REAL)
-            return sign * value
-
-        elif self.lookahead.tag == Tag.ID:
-            value = self.lookahead.value
-            self.match(Tag.ID)
-            if sign == -1:
-                return f"-{value}"
-            return value
-        else:
-            raise SyntaxError(f"Unexpected Tag, got {self.lookahead.tag}")
-
-
-
     def parse_assign(self, labels, target):
         self.match(Tag.ASSIGN)
+        expr = self.parse_expr()
+        return Assign(labels, target, expr)
+    
+    def parse_expr(self):
+        return self.parse_or()
+    
+    def parse_or(self):
+        expr = self.parse_and()
+        while self.lookahead.tag == Tag.OR:
+            op = self.lookahead.tag
+            self.match(op)
+            right = self.parse_and()
+            expr = ('binop', op, expr, right)
+        return expr
 
-        source = self.parse_signed_op()
+    def parse_and(self):
+        expr = self.parse_rel()
+        while self.lookahead.tag == Tag.AND:
+            op = self.lookahead.tag
+            self.match(op)
+            right = self.parse_rel()
+            expr = ('binop', op, expr, right)
+        return expr
+    
+    def parse_rel(self):
+        expr = self.parse_arith_expr()
+        while self.lookahead.tag in (Tag.LT, Tag.LE, Tag.GT, Tag.GE, Tag.EQ, Tag.NEQ):
+            op = self.lookahead.tag
+            self.match(op)
+            right = self.parse_arith_expr()
+            expr = ('binop', op, expr, right)
+        return expr
 
-        if self.lookahead.tag in (Tag.PLUS, Tag.MINUS, Tag.MUL, Tag.DIV, Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE):
-            return self.parse_binary_op(labels, target, source)
+    def parse_arith_expr(self):
+        expr = self.parse_term()
+        while self.lookahead.tag in (Tag.PLUS, Tag.MINUS):
+            op = self.lookahead.tag
+            self.match(op)
+            right = self.parse_term()
+            expr = ('binop', op, expr, right)
+        return expr
 
-        elif self.lookahead.tag == Tag.LBRACKET:
-            return self.parse_array_read(labels, target, source)
+    def parse_term(self):
+        expr = self.parse_unary()
+        while self.lookahead.tag in (Tag.MUL, Tag.DIV):
+            op = self.lookahead.tag
+            self.match(op)
+            right = self.parse_unary()
+            expr = ('binop', op, expr, right)
+        return expr
 
-        return Assign(labels, target, source)
+    def parse_unary(self):
+        if self.lookahead.tag == Tag.MINUS:
+            self.match(Tag.MINUS)
+            expr = self.parse_unary()
+            return ('neg', expr)
+        elif self.lookahead.tag == Tag.NOT:
+            self.match(Tag.NOT)
+            expr = self.parse_unary()
+            return ('not', expr)
+        return self.parse_factor()
 
 
-    def parse_binary_op(self, labels, target, arg1):
-        op = self.lookahead.tag
-        self.match(op)
+    def parse_factor(self):
+        if self.lookahead.tag == Tag.LPAREN:
+            self.match(Tag.LPAREN)
+            expr = self.parse_expr()
+            self.match(Tag.RPAREN)
+            return expr
+        elif self.lookahead.tag == Tag.NUM:
+            value = self.lookahead.value
+            self.match(Tag.NUM)
+            return ('num', value)
+        elif self.lookahead.tag == Tag.REAL:
+            value = self.lookahead.value
+            self.match(Tag.REAL)
+            return ('real', value)
+        elif self.lookahead.tag == Tag.TRUE:
+            self.match(Tag.TRUE)
+            return ('bool', True)
+        elif self.lookahead.tag == Tag.FALSE:
+            self.match(Tag.FALSE)
+            return ('bool', False)
+        elif self.lookahead.tag == Tag.ID:
+            name = self.lookahead.value
+            self.match(Tag.ID)
+            if self.lookahead.tag == Tag.LBRACKET:
+                self.match(Tag.LBRACKET)
+                index_expr = self.parse_expr()
+                self.match(Tag.RBRACKET)
+                return ('array', name, index_expr)
+            return ('var', name)
+        else:
+            raise SyntaxError(f"Unexpected token in expression: {self.lookahead.tag}")
 
-        arg2 = self.parse_signed_op()
 
-        return BinaryOp(labels, target, op, arg1, arg2)
 
     def parse_arr_assign(self, labels, array_name):
         self.match(Tag.LBRACKET)
-        index = self.parse_signed_op(allow_real=False, allow_bool=False)
+        index_expr = self.parse_expr()
         self.match(Tag.RBRACKET)
-
         self.match(Tag.ASSIGN)
+        value_expr = self.parse_expr()
+        return ArrayAssign(labels, array_name, index_expr, value_expr)
 
-        value = self.parse_signed_op()
-
-        return ArrayAssign(labels, array_name, index, value)
 
     def parse_array_read(self, labels, target, array_name):
         self.match(Tag.LBRACKET)
-        index = self.parse_signed_op(allow_bool=False, allow_real=False)
+        index_expr = self.parse_expr()
         self.match(Tag.RBRACKET)
-
-        return ArrayRead(labels, target, array_name, index)
+        return ArrayRead(labels, target, array_name, index_expr)
 
     def parse_if(self, labels):
         iftag = self.lookahead.tag
         self.match(iftag)
 
-        left = self.lookahead.value
-        self.match(self.lookahead.tag)
-
-        if self.lookahead.tag in (Tag.LT, Tag.GT, Tag.EQ, Tag.LE, Tag.GE, Tag.NEQ):
-            op = self.lookahead.tag
-            self.match(op)
-
-            right = self.lookahead.value
-            self.match(self.lookahead.tag)
-        else:
-            # Boolean only: e.g. if b goto L2
-            op = None
-            right = None
+        # Parse full expression instead of just identifier
+        condition_expr = self.parse_expr()
 
         self.match(Tag.GOTO)
         target_label = self.lookahead.value
         self.match(Tag.ID)
 
         if iftag == Tag.IF:
-            return IfGoto(labels, left, op, right, target_label)
-        return IfFalseGoto(labels, left, op, right, target_label)
+            return IfGoto(labels, condition_expr, target_label)
+        return IfFalseGoto(labels, condition_expr, target_label)
+
 
     def parse_goto(self, labels):
         self.match(Tag.GOTO)

@@ -29,13 +29,6 @@ class Lexer:
             self.peek = self.text[self.index]
             self.index += 1
 
-    def readch_match(self, c):
-        self.readch()
-        if self.peek == c:
-            self.peek = ' '
-            return True
-        return False
-
     def skip_whitespace(self):
         while self.peek is not None and self.peek in {' ', '\t', '\n', '\r'}:
             self.readch()
@@ -47,14 +40,34 @@ class Lexer:
             return Token(Tag.EOF)
 
         # Handle composite operators
-        if self.peek in {'<', '>', '=', '!'}:
+        if self.peek in {'<', '>', '=', '!', '|', '&'}:
             char = self.peek
-            if self.readch_match('='):
-                tok = Token({'<':'<=', '>':'>=', '=':'==', '!': '!='}.get(char))
-                return tok
-            tok = Token(char)
+            self.readch()  # advance to peek at next character
+
+            # Handle composite two-character operators
+            if char == '<' and self.peek == '=':
+                self.readch()
+                return Token(Tag.LE)
+            elif char == '>' and self.peek == '=':
+                self.readch()
+                return Token(Tag.GE)
+            elif char == '=' and self.peek == '=':
+                self.readch()
+                return Token(Tag.EQ)
+            elif char == '!' and self.peek == '=':
+                self.readch()
+                return Token(Tag.NEQ)
+            elif char == '|' and self.peek == '|':
+                self.readch()
+                return Token(Tag.OR)
+            elif char == '&' and self.peek == '&':
+                self.readch()
+                return Token(Tag.AND)
+
+            # Single-character fallback
             self.peek = ' '
-            return tok
+            return Token(char)
+
 
         if self.peek == '-' or self.peek.isdigit():
             num_str = ''
@@ -126,9 +139,11 @@ class Lexer:
         elif self.peek == '/': tok = Token(Tag.DIV)
         elif self.peek == '[': tok = Token(Tag.LBRACKET)
         elif self.peek == ']': tok = Token(Tag.RBRACKET)
-        elif self.peek == ':': tok = Token(Tag.COLON)
         elif self.peek == '{': tok = Token(Tag.LBRACE)
         elif self.peek == '}': tok = Token(Tag.RBRACE)
+        elif self.peek == '(': tok = Token(Tag.LPAREN)
+        elif self.peek == ')': tok = Token(Tag.RPAREN)
+        elif self.peek == ':': tok = Token(Tag.COLON)
         elif self.peek == ',': tok = Token(Tag.COMMA)
         elif self.peek == ':': tok = Token(Tag.COLON)
 
