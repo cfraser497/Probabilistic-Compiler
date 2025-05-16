@@ -3,10 +3,15 @@
 ## 📦 Dependencies
 - [Java](https://www.java.com/)
 - [Python 3](https://www.python.org/)
-
+- [GraphViz]
 ---
 
 ## 🚀 Usage
+
+### Install Dependencies - Java & Python
+```bash
+sudo apt-get update && sudo apt-get install -y graphviz graphviz-dev
+```
 
 ### 🛠 Compile with Java
 
